@@ -1,12 +1,13 @@
 <?php
 
+require_once "config.php";
+require_once "common.php";
+
 require_once "drongo-forms/forms.php";
 
-
 # TODO: prevent files from overwriting each other
-
-$G_UPLOAD_DIR = '/tmp/fook';
-$G_ENTRIES_FILE = "${G_UPLOAD_DIR}/entries.csv";
+# TODO: indicate required fields
+# TODO: if errors, show an indicator at top of form
 
 class BookEntryForm extends Form {
     function __construct($data=null,$files=null, $opts=null) {
@@ -50,11 +51,9 @@ function view()
         $f= new BookEntryForm($_POST,$_FILES,$form_opts);
         if($f->is_valid()) {
             process($f);
-            // process form here...
-            // then, redirect to prevent doubleposting
-            //header("HTTP/1.1 303 See Other");
-            //header("Location: /thanks");
-            template_thanks($f);
+            // redirect to prevent doubleposting
+            header("HTTP/1.1 303 See Other");
+            header("Location: /thanks");
             return;
         }
     } else {
@@ -67,25 +66,6 @@ function view()
 
 
 
-function template_header() {
-?><html>
-<head>
-<link rel="stylesheet" type="text/css" href="/style.css" />
-</head>
-<body>
-<h1>The Orwell prize</h1>
-<hr/>
-<?php
-}
-
-function template_footer() {
-?>
-</body>
-</html>
-<?php
-}
-
-
 
 // the main template for filing an entry
 function template_enter( $f ) {
@@ -96,54 +76,17 @@ function template_enter( $f ) {
 
 <h2>Book Prize 2013 Entry</h2>
 
+<p>Some blurb probably goes here...</p>
+
 <form enctype="multipart/form-data" action="" method="POST">
 <table>
 <?= $f->as_table(); ?>
 </table>
 
-<p>
-<em>
-</em>
-</p>
-
-<input type="submit" />
+<input type="submit" value="Submit Entry"/>
 </form>
 <br/>
 
-<?php
-    template_footer();
-}
-
-
-// TODO: should be in separate file
-function template_thanks( $f ) {
-    global $G_UPLOAD_DIR, $G_ENTRIES_FILE;
-    template_header();
-?>
-<p>Thanks for your entry</p>
-<br/>
-<br/>
-<br/>
-<hr/>
-<br/>
-<br/>
-<p>(here's what the entries file looks like now:</p>
-<pre>
-<?= file_get_contents( $G_ENTRIES_FILE); ?>
-
-</pre>
-<?php
-    template_footer();
-}
-
-
-
-// display an error
-function template_pearshaped( $err ) {
-    template_header();
-?>
-<p>Uhoh... Something went wrong:</p>
-<p><em><?=$err->getmessage(); ?></em></p>
 <?php
     template_footer();
 }
@@ -155,17 +98,22 @@ function template_pearshaped( $err ) {
 function process($f) {
     global $G_UPLOAD_DIR, $G_ENTRIES_FILE;
 
+    if(!file_exists($G_UPLOAD_DIR)) {
+        throw new Exception("Internal error - Output dir doesn't exist (${G_UPLOAD_DIR})");
+    }
     if(!is_writable($G_UPLOAD_DIR)) {
-        throw new Exception("Internal error - Output dir doesn't exist, or isn't writable");
+        throw new Exception("Internal error - Output dir isn't writable (${G_UPLOAD_DIR})");
     }
 
     $data = $f->cleaned_data;
 
+    // handle any uploaded cover images
     if( $data['book_cover'] ) {
+        // use the book title as the basis for filename
         $ext = pathinfo($data['book_cover']['name'], PATHINFO_EXTENSION);
         $cover_file = preg_replace("/[^a-zA-Z\.]/","", $data['book_title']);
         if(!$cover_file) {
-            throw new Exception("Internal error - couldn't save cover image because of bad name");
+            throw new Exception("Internal error - couldn't save cover image because of bad name (${cover_file})");
         }
         $cover_file .= ".".$ext;
 
@@ -187,16 +135,20 @@ function process($f) {
         }
     }
 
+    // format a line of data
     $obuf = fopen('php://output', 'w');
     ob_start();
     fputcsv($obuf, $data);
     fclose($obuf);
     $line = ob_get_clean();
 
+    // append it (with locking in case of simultaneous access!)
     if( file_put_contents( $G_ENTRIES_FILE, $line, FILE_APPEND|LOCK_EX) === FALSE ) {
         throw new Exception("Internal error - couldn't record details");
     }
 }
+
+
 
 try {
     view();

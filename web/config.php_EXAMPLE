@@ -1,0 +1,7 @@
+<?php
+// directory in which to plonk all uploaded files
+$G_UPLOAD_DIR = '/tmp/entry_uploads';
+
+// csv file with entry details
+$G_ENTRIES_FILE = "${G_UPLOAD_DIR}/entries.csv";
+?>
