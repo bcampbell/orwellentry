@@ -1,0 +1,25 @@
+
+
+body {
+    font-family: Arial, sans-serif;
+    max-width: 40em;
+    margin: auto;
+}
+
+input[type="text"] { width: 100%; }
+textarea { width: 100%; }
+
+form table
+{
+    padding: 1em;
+    border-collapse: collapse;
+    /*border: 1px solid #444; */
+}
+
+form tr { /*border-bottom: 1px solid #ccc;*/ }
+form th { min-width: 12em; font-weight: normal; padding: 1em 0.5em; text-align: right; vertical-align: top; }
+form td { padding: 1em 0.5em; }
+
+form .helptext { color: #444; font-size: smaller; }
+form .errorlist { background: red; color: white; margin:0; padding: 0.2em 0.5em; }
+
