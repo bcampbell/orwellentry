@@ -8,8 +8,13 @@ function template_header() {
 <link rel="stylesheet" type="text/css" href="/style.css" />
 </head>
 <body>
-<h1>The Orwell prize</h1>
-<hr/>
+<header>
+<h1 class="logo"><a href="http://theorwellprize.co.uk">
+ <img class="logo" alt="The Orwell Prize" src="http://theorwellprize.co.uk/wp-content/themes/orwell/images/logo.png" width="365" height="37" />
+</a></h1>
+<img class="slogan" src="http://theorwellprize.co.uk/wp-content/themes/orwell/images/slogan.png" width="464" height="70" alt="&lsquo;What I have most wanted to do...  is to make political writing into an art&rsquo;" />
+</header>
+<div class="main">
 <?php
 }
 
@@ -17,7 +22,7 @@ function template_header() {
 
 function template_footer() {
 ?>
-<hr/>
+</div>
 </body>
 </html>
 <?php

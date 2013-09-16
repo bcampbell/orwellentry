@@ -4,22 +4,98 @@ body {
     font-family: Arial, sans-serif;
     max-width: 40em;
     margin: auto;
+    color: #444;
 }
 
+/* base styles */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1,h2,h3,h4 {
+    color: #000;
+    font-weight: bold;
+}
+
+h1 { font-size: xx-large; } 
+h2 { font-size: x-large; }
+h3 { font-size: large; }
+
+
+/* form style */
 input[type="text"] { width: 100%; }
 textarea { width: 100%; }
 
-form table
-{
-    padding: 1em;
-    border-collapse: collapse;
-    /*border: 1px solid #444; */
+
+input { display: block; }
+label { display: block; font-weight: bold; color: #000; }
+
+.helptext { color: #444; font-size: smaller; }
+.errorlist { list-style: none; color: #c00; font-weight: bold; margin:0; padding: 0.2em 0; }
+
+fieldset {border: none; padding: 0; margin: 0; }
+legend {
+    color: #000;
+    width: 100%;
+    font-weight: bold;
+    font-size: 150%;
+    padding-bottom: 0.2em;
+    border-bottom: 3px solid #000;
 }
 
-form tr { /*border-bottom: 1px solid #ccc;*/ }
-form th { min-width: 12em; font-weight: normal; padding: 1em 0.5em; text-align: right; vertical-align: top; }
-form td { padding: 1em 0.5em; }
+.fld {padding: 1em 0 0 0; margin: 0.5em 0;}
+.fld-error input { border: solid 1px #c00; }
+.fld-required {}
+.fld-required label:after { content:"*"; color: #c00; font-weight: bold; }
 
-form .helptext { color: #444; font-size: smaller; }
-form .errorlist { background: #c00; color: white; margin:0; padding: 0.2em 0.5em; }
+hr {
+    border: none;
+    background-color: #000;
+    color: #000;
+    height: 3px;
+}
 
+
+/* page header */
+
+header {
+    position: relative;
+    background-color: #D71921;
+    color: #fff;
+    padding: 0;
+    margin: 0;
+}
+
+header h1 {
+    padding: 1em 0 0.3em 0;
+    margin: 24px 0 0 21px;
+}
+
+.logo {
+    display: block;
+    height: 37px;
+    width: 365px;
+}
+
+.slogan {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    left: -74px;
+    top: 0;
+    height: 464px;
+    width: 70px;
+}
+
+
+
+/* */
+
+.main { margin: 1em; }
+
+
+/* hacks */

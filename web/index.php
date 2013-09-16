@@ -15,18 +15,18 @@ class BookEntryForm extends Form {
         $disclaimer = "I declare that this work, submitted for consideration for the Orwell Prize for Books 2013, is wholly or substantially my own, and does not contain any plagiarised or unacknowledged material.";
 
         $this->fields['book_title'] = new CharField(
-            array( 'required'=>TRUE, 'help_text'=>"e.g. Zapp Brannigan's Big Book of War"));
+            array( 'required'=>TRUE, 'label'=>"Title", 'help_text'=>"e.g. Zapp Brannigan's Big Book of War"));
         $this->fields['author_first_name'] = new CharField(array( 'required'=>TRUE ));
         $this->fields['author_last_name'] = new CharField(array( 'required'=>TRUE ));
         $this->fields['book_cover'] = new FileField(array( 'required'=>FALSE, 'help_text'=>"Please keep it below 2MB<br/>\nAccepted formats: png, jpeg, gif, tiff" ));
         // TODO: publication_month (use regex?)
         $this->fields['link_with_uk_or_ireland'] = new CharField(array(
             'label'=>'Link with UK or Ireland',
-            'help_text'=>'Tell us how you are linked to UK or Ireland'
+            'help_text'=>'Tell us how you are linked to UK or Ireland<br/>(including, but not limited to, residency, citizenship or first publication)'
         ));
-        $this->fields['author_email'] = new EmailField(array('required'=>FALSE, 'help_text'=>'Email address of the author'));
-        $this->fields['author_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea' ));
-        $this->fields['author_phone_number'] = new CharField(array('required'=>FALSE));
+        $this->fields['author_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email", 'help_text'=>'Email address of the author'));
+        $this->fields['author_address'] = new CharField(array('required'=>FALSE, 'label'=>"Address", 'widget'=>'TextArea' ));
+        $this->fields['author_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Phone"));
 
         $this->fields['publisher_email'] = new EmailField(array('required'=>FALSE));
         $this->fields['publisher_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea' ));
@@ -34,7 +34,10 @@ class BookEntryForm extends Form {
         $this->fields['agent_email'] = new EmailField(array('required'=>FALSE));
         $this->fields['agent_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea' ));
         $this->fields['agent_phone'] = new CharField(array('required'=>FALSE));
-        $this->fields['declaration'] = new BooleanField(array('help_text'=>$disclaimer));
+        $this->fields['declaration'] = new BooleanField(array('label'=>"I agree"));
+
+        $this->error_css_class = 'fld-error';
+        $this->required_css_class = 'fld-required';
     }
 }
 
@@ -65,6 +68,22 @@ function view()
 }
 
 
+// little helper template to output a single field
+function fld($f) {
+?>
+<div class="fld <?=$f->css_classes() ?>">
+<?= $f->label_tag() ?>
+<?= $f ?>
+<span class="helptext"><?= $f->help_text ?></span>
+<?php if($f->errors) { ?>
+<ul class="errorlist">
+<?php foreach($f->errors as $err) { ?>
+<li><?= $err ?></li>
+</ul><?php } ?>
+<?php } ?>
+</div>
+<?php
+}
 
 
 // the main template for filing an entry
@@ -74,14 +93,48 @@ function template_enter( $f ) {
     template_header();
 ?>
 
-<h2>Book Prize 2013 Entry</h2>
-
-<p>Some blurb probably goes here...</p>
+<h1>Book Prize 2013: Entry form</h1>
+<hr/>
+<p>blurb goes here...</p>
 
 <form enctype="multipart/form-data" action="" method="POST">
-<table>
-<?= $f->as_table(); ?>
-</table>
+<fieldset>
+<legend>Book</legend>
+<?php fld($f['book_title']); ?>
+<?php /* fld($f['publication_date']); */?>
+<?php fld($f['author_first_name']); ?>
+<?php fld($f['author_last_name']); ?>
+<?php fld($f['link_with_uk_or_ireland']); ?>
+<?php fld($f['book_cover']); ?>
+</fieldset>
+
+
+<fieldset>
+<legend>Author</legend>
+<?php fld($f['author_email']); ?>
+<?php fld($f['author_address']); ?>
+<?php fld($f['author_phone']); ?>
+</fieldset>
+
+<fieldset>
+<legend>Publisher</legend>
+<?php fld($f['publisher_email']); ?>
+<?php fld($f['publisher_address']); ?>
+<?php fld($f['publisher_phone']); ?>
+</fieldset>
+
+<fieldset>
+<legend>Agent</legend>
+<?php fld($f['agent_email']); ?>
+<?php fld($f['agent_address']); ?>
+<?php fld($f['agent_phone']); ?>
+</fieldset>
+
+<fieldset>
+<legend>Disclaimer</legend>
+<p>I declare that this work, submitted for consideration for the Orwell Prize for Books 2013, is wholly or substantially my own, and does not contain any plagiarised or unacknowledged material.</p>
+<?php fld($f['declaration']); ?>
+</fieldset>
 
 <input type="submit" value="Submit Entry"/>
 </form>
