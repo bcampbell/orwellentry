@@ -8,13 +8,10 @@ body {
 }
 
 /* base styles */
-a {
-    text-decoration: none;
-}
+a { text-decoration: none; color: #000; }
+a:hover { text-decoration: underline; color: #000; }
 
-a:hover {
-    text-decoration: underline;
-}
+img {border : 0;}
 
 h1,h2,h3,h4 {
     color: #000;
@@ -51,6 +48,8 @@ legend {
 .fld-error input { border: solid 1px #c00; }
 .fld-required {}
 .fld-required label:after { content:"*"; color: #c00; font-weight: bold; }
+
+.form-error { border: 2px solid #c00; color: #c00; font-weight: bold; margin: 1em 0; padding: 0.5em; }
 
 hr {
     border: none;

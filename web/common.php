@@ -1,5 +1,22 @@
 <?php
 
+// little helper template to output a single field
+function fld($f) {
+?>
+<div class="fld <?=$f->css_classes() ?>">
+<?= $f->label_tag() ?>
+<?= $f ?>
+<span class="helptext"><?= $f->help_text ?></span>
+<?php if($f->errors) { ?>
+<ul class="errorlist">
+<?php foreach($f->errors as $err) { ?>
+<li><?= $err ?></li>
+</ul><?php } ?>
+<?php } ?>
+</div>
+<?php
+}
+
 
 
 function template_header() {

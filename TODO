@@ -1,0 +1,13 @@
+
+prevent uploads from overwriting each other
+add http:// prefix to URLFields if missing
+more polite validation messages
+email alerts
+
+journalism prize
+----------------
+
+ensure >=4 entries
+
+
+
