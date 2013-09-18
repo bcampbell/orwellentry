@@ -16,11 +16,16 @@ The submission deadline is <strong>15th January, 2014</strong>.
 </p>
 <p>
 Journalism Prize entries should consist of between four and six submissions,
-which may be printed articles (in print or online), blog posts, !!!radio broadcasts
-or television packages. A byline photograph with no rights reserved must be
+which may be articles (in print or online) or blog posts.</p>
+<p>
+A byline photograph with no rights reserved must be
 submitted with every entry.
+</p>
+<p>
 Entry is FREE and there are no charges at any point. All work published for
 the first time between 1st January 2013 and 31st December 2013 is eligible.
+</p>
+<p>
 Entrants must have a clear relationship with the UK or Ireland (including,
 but not limited to, residency, citizenship or first publication).
 </p>
