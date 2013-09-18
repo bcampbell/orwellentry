@@ -48,11 +48,12 @@ class JournalismEntryForm extends Form {
         ));
 
         for( $n=1; $n<=6; ++$n) {
-            $this["item_{$n}_title"] = new CharField(array('required'=>FALSE,'label'=>'Title'));
-            $this["item_{$n}_publication"] = new CharField(array('required'=>FALSE,'label'=>'Publication'));
-            $this["item_{$n}_pubdate"] = new DateField(array('required'=>FALSE,'label'=>'Date of first publication'));
+            $req = ($n<=4)?TRUE:FALSE;
+            $this["item_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
+            $this["item_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication'));
+            $this["item_{$n}_pubdate"] = new DateField(array('required'=>$req,'label'=>'Date of first publication'));
             $this["item_{$n}_url"] = new URLField(array('required'=>FALSE,'label'=>'URL'));
-            $this["item_{$n}_copy"] = new FileField(array('required'=>FALSE,'label'=>'Copy', 'help_text'=>"PDF only, please"));
+            $this["item_{$n}_copy"] = new FileField(array('required'=>$req,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }
 
         $this['publication_contact'] = new CharField(array('required'=>FALSE, 'label'=>'Contact name'));
@@ -62,6 +63,22 @@ class JournalismEntryForm extends Form {
 
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
+    }
+
+
+    //
+    function clean() {
+        // make sure that link is filled in if dropdown is set to "other"
+        $link = $this->cleaned_data['link_with_uk_or_ireland'];
+        $link_other = $this->cleaned_data['link_other'];
+        if($link=='other' && !$link_other) {
+            print("<pre>'$link' '$link_other'</pre>");
+            $this->_errors["link_with_uk_or_ireland"] = array("Please specify the link to the UK or Ireland");
+            unset($this->cleaned_data['link_with_uk_or_ireland']);
+            unset($this->cleaned_data['link_other']);
+        }
+
+        return $this->cleaned_data;
     }
 }
 

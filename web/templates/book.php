@@ -28,7 +28,7 @@ the first time between 1st January 2013 and 31st December 2013 are eligible.
 Entrants must have a clear relationship with the UK or Ireland (including,
 but not limited to, residency, citizenship or first publication).
 </p>
-<p>The full list of rules is available on <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules">theorwellprize.co.uk</a>.</p>
+<p>For details, see the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules">full list of rules</a>.</p>
 <p>If you have any queries, please contact theorwellprize@mediastandardstrust.org or 0207 848 7930.</p>
 
 <form enctype="multipart/form-data" method="POST">
@@ -64,7 +64,7 @@ but not limited to, residency, citizenship or first publication).
 </fieldset>
 
 <fieldset>
-<legend>Publisher</legend>
+<legend>Agent</legend>
 <?php fld($f['agent_name']); ?>
 <?php fld($f['agent_email']); ?>
 <?php fld($f['agent_address']); ?>
@@ -82,13 +82,14 @@ but not limited to, residency, citizenship or first publication).
 <script>
 var select = document.getElementById("link_with_uk_or_ireland");
 var other = document.getElementById("link_other");
-other.style.display="none";
-select.onchange=function(){
+var f=function(){
     if(select.value=="other"){
        other.style.display="block";
     } else {
        other.style.display="none";
     }
 }
+select.onchange=f;
+f();
 </script>
 <?php endblock() ?>

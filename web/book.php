@@ -58,6 +58,20 @@ class BookEntryForm extends Form {
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
     }
+
+    function clean() {
+        // make sure that link is filled in if dropdown is set to "other"
+        $link = $this->cleaned_data['link_with_uk_or_ireland'];
+        $link_other = $this->cleaned_data['link_other'];
+        if($link=='other' && !$link_other) {
+            print("<pre>'$link' '$link_other'</pre>");
+            $this->_errors["link_with_uk_or_ireland"] = array("Please specify the link to the UK or Ireland");
+            unset($this->cleaned_data['link_with_uk_or_ireland']);
+            unset($this->cleaned_data['link_other']);
+        }
+        
+        return $this->cleaned_data;
+    }
 }
 
 

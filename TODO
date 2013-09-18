@@ -4,10 +4,9 @@ add http:// prefix to URLFields if missing
 more polite validation messages
 email alerts
 
-validate: link to uk or ireland _or_ 'other'
-
+[done]validate: link to uk or ireland _or_ 'other'
 font
-thankyou pages
+[done]thankyou pages
 
 Book prize:
 ----------
@@ -16,7 +15,7 @@ journalism prize
 ----------------
 
 validate items:
-  ensure >=4 entries
+[done] ensure >=4 entries
   ensure all complete
   ensure pdf only
 
