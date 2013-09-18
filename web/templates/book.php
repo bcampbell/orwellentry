@@ -12,13 +12,13 @@
 <h1>Book Prize 2014: Entry form</h1>
 <hr/>
 <p>Five copies of each submitted book should be sent to:<br/><br/>
-<strong>
+<div class="address">
 The Orwell Prize<br/>
 Kings College London<br/>
 Strand Bridge House<br/>
 138-142 The Strand<br/>
 London WC2R 2LS
-</strong>
+</div>
 <p>
 The submission deadline is <strong>15th January, 2014</strong>.
 </p>

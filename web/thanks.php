@@ -1,29 +1,20 @@
 <?php
-
 require_once "config.php";
 require_once "common.php";
 
-
-function template_thanks() {
-    template_header();
-?>
-<p>Thanks for your entry</p>
-<p>More blurb goes here...</p>
-<br/>
-<?php
-    template_footer();
-}
-
-
-
 function view() {
-    template_thanks();
+    global $g_config;
+    $which = $_GET['entered'];
+    if(!array_key_exists($which,$g_config)) {
+        throw new Exception("Bad param (entered)");
+    }
+    include "templates/thanks_{$which}.php";
 }
 
 try {
     view();
-} catch(Exception $e) {
-    template_pearshaped($e);
+} catch(Exception $err) {
+    include "templates/pearshaped.php";
 }
 
 ?>

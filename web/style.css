@@ -71,6 +71,10 @@ hr {
 }
 
 
+/* modules */
+
+.address { margin-left: 2em; font-weight: bold; }
+
 /* page header */
 
 header {

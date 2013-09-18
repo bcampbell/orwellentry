@@ -85,7 +85,7 @@ class JournalismEntryHandler {
                 $this->process($f);
                 // redirect to prevent doubleposting
                 header("HTTP/1.1 303 See Other");
-                header("Location: /thanks");
+                header("Location: /thanks?entered={$this->shortname}");
                 return;
             }
         } else {
