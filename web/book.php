@@ -18,6 +18,14 @@ class BookEntryForm extends Form {
         $this->error_css_class = 'fld-error';
         $this->required_css_class = 'fld-required';
 
+        $relationship_choices = array(
+            ''=>"-- please select --",
+            'resident'=>"Residency in UK or Ireland",
+            'citizen'=>"Citizen of UK or Ireland",
+            'first_publication'=>"First publication of entry",
+            'foreign_correspondent'=>"Foreign correspondent for British or Irish publication",
+            'resident_at_time_of_writing'=>"Resident in the UK or Ireland at the time of writing or publication",
+            'other'=>"Other (please specify)");
 
         $this['book_title'] = new CharField(
             array( 'required'=>TRUE, 'label'=>"Title"));
@@ -25,22 +33,28 @@ class BookEntryForm extends Form {
         $this['author_first_name'] = new CharField(array( 'required'=>TRUE ));
         $this['author_last_name'] = new CharField(array( 'required'=>TRUE ));
         $this['book_cover'] = new FileField(array(
+            'label'=>"Cover art",
             'required'=>TRUE,
-            'help_text'=>"A image file of the cover art, with no rights reserved.<br/>Please keep it below 2MB<br/>\nAccepted formats are png, jpeg, gif, tiff" ));
-        $this['link_with_uk_or_ireland'] = new CharField(array(
-            'label'=>'Link with UK or Ireland',
-            'help_text'=>'Tell us how you are linked to UK or Ireland<br/>(including, but not limited to, residency, citizenship or first publication)'
-        ));
+            'help_text'=>"A image file of the cover art for press with no rights reserved.<br/>Please keep it below 3MB<br/>" ));
+        $this['link_with_uk_or_ireland'] = new ChoiceField(array(
+            'label'=>'Relationship of entry to UK or Ireland',
+            'choices'=>$relationship_choices,
+            'help_text'=>'See point 9 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
+        $this['link_other'] = new CharField(array('required'=>FALSE,'label'=>""));
         $this['author_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email", 'help_text'=>'Email address of the author'));
+        $this['author_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['author_address'] = new CharField(array('required'=>FALSE, 'label'=>"Address", 'widget'=>'TextArea' ));
         $this['author_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Phone"));
 
-        $this['publisher_email'] = new EmailField(array('required'=>FALSE));
-        $this['publisher_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea' ));
-        $this['publisher_phone'] = new CharField(array('required'=>FALSE));
-        $this['agent_email'] = new EmailField(array('required'=>FALSE));
-        $this['agent_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea' ));
-        $this['agent_phone'] = new CharField(array('required'=>FALSE));
+        $this['publisher_name'] = new CharField(array('required'=>TRUE, 'label'=>"Name"));
+        $this['publisher_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email"));
+        $this['publisher_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea', 'label'=>"Address" ));
+        $this['publisher_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Telephone number"));
+
+        $this['agent_name'] = new CharField(array('required'=>FALSE, 'label'=>"Name"));
+        $this['agent_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email"));
+        $this['agent_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea', 'label'=>"Address" ));
+        $this['agent_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Telephone number"));
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
     }
@@ -81,84 +95,8 @@ class BookEntryHandler {
 
     // the main template for filing an entry
     function render_page( $f ) {
-        // TODO: add a MAX_FILE_SIZE hidden element to enable early-out on
-        // oversize files
-        template_header();
-
-        // TODO - check:
-        // need to send in cover art?
-        // deadline
-        // pubdate eligiblity range
-        // contact details (not katriona)
-?>
-
-<h1>Book Prize !!!2013: Entry form</h1>
-<hr/>
-<p>Four copies of each submitted book (and cover art?) should be sent to:<br/><br/>
-<strong>!!!Person | The Orwell Prize | Address... | Address... | London A11 1AA</strong>
-<p>
-The submission deadline is <strong>!!!Wednesday 9th January, 2013</strong>.
-</p>
-<p>
-Entry is FREE and there are no charges at any point. All books published for
-the first time between 1st January !!!2013 and 31st December !!!2013 are eligible.
-Entrants must have a clear relationship with the UK or Ireland (including,
-but not limited to, residency, citizenship or first publication).
-</p>
-<p>The full list of rules is available on <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules">theorwellprize.co.uk</a>.</p>
-<p>If you have any queries, please contact !!!katriona.lewis@mediastandardstrust.org or 0207 229 5722.</p>
-
-<form enctype="multipart/form-data" method="POST">
-<?php if($f->errors) { ?>
-<div class="form-error">Please correct the fields marked in red, then try submitting the form again</div>
-<?php } ?>
-
-<fieldset>
-<legend>Book</legend>
-<?php fld($f['book_title']); ?>
-<?php fld($f['publication_date']); ?>
-<?php fld($f['author_first_name']); ?>
-<?php fld($f['author_last_name']); ?>
-<?php fld($f['link_with_uk_or_ireland']); ?>
-<?php fld($f['book_cover']); ?>
-</fieldset>
-
-
-<fieldset>
-<legend>Author</legend>
-<?php fld($f['author_email']); ?>
-<?php fld($f['author_address']); ?>
-<?php fld($f['author_phone']); ?>
-</fieldset>
-
-<fieldset>
-<legend>Publisher</legend>
-<?php fld($f['publisher_email']); ?>
-<?php fld($f['publisher_address']); ?>
-<?php fld($f['publisher_phone']); ?>
-</fieldset>
-
-<fieldset>
-<legend>Agent</legend>
-<?php fld($f['agent_email']); ?>
-<?php fld($f['agent_address']); ?>
-<?php fld($f['agent_phone']); ?>
-</fieldset>
-
-<fieldset>
-<legend>Disclaimer</legend>
-<p>I declare that this work, submitted for consideration for the Orwell Prize for Books 2013, is wholly or substantially my own, and does not contain any plagiarised or unacknowledged material.</p>
-<?php fld($f['declaration']); ?>
-</fieldset>
-
-<input type="submit" value="Submit Entry"/>
-</form>
-<br/>
-
-<?php
-        template_footer();
+        include "templates/book.php";
     }
-
 
     function sanity_check() {
         if(!file_exists($this->upload_dir)) {
@@ -226,8 +164,8 @@ but not limited to, residency, citizenship or first publication).
 try {
     $v = new BookEntryHandler();
     $v->handle();
-} catch(Exception $e) {
-    template_pearshaped($e);
+} catch(Exception $err) {
+    include "templates/pearshaped.php";
 }
 
 ?>

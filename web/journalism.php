@@ -20,15 +20,27 @@ class JournalismEntryForm extends Form {
         $this->required_css_class = 'fld-required';
 
 
+        $relationship_choices = array(
+            ''=>"-- please select --",
+            'resident'=>"Residency in UK or Ireland",
+            'citizen'=>"Citizen of UK or Ireland",
+            'first_publication'=>"First publication of entry",
+            'foreign_correspondent'=>"Foreign correspondent for British or Irish publication",
+            'resident_at_time_of_writing'=>"Resident in the UK or Ireland at the time of writing or publication",
+            'other'=>"Other (please specify)");
+
         $this['journo_first_name'] = new CharField( array( 'required'=>TRUE, 'label'=>"First name"));
         $this['journo_last_name'] = new CharField( array( 'required'=>TRUE, 'label'=>"Last name"));
-        $this['journo_address'] = new CharField(array('required'=>FALSE, 'label'=>"Address", 'widget'=>'TextArea' ));
+        $this['journo_address'] = new CharField(array('required'=>FALSE, 'label'=>"Correspondence address", 'widget'=>'TextArea' ));
         $this['journo_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email" ));
+        $this['journo_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['journo_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Telephone number"));
-        $this['link_with_uk_or_ireland'] = new CharField(array(
+        $this['link_with_uk_or_ireland'] = new ChoiceField(array(
             'label'=>'Relationship of entry to UK or Ireland',
-            'help_text'=>'Tell us how you are linked to UK or Ireland<br/>(including, but not limited to, residency, citizenship or first publication)',
-        ));
+            'choices'=>$relationship_choices,
+            'help_text'=>'See point 9 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
+        $this['link_other'] = new CharField(array('required'=>FALSE,'label'=>""));
+
         $this["journo_photo"] = new FileField(array(
             'required'=>TRUE,
             'label'=>"Photograph",
@@ -36,11 +48,11 @@ class JournalismEntryForm extends Form {
         ));
 
         for( $n=1; $n<=6; ++$n) {
-            $this["item_{$n}_title"] = new CharField(array('required'=>FALSE));
-            $this["item_{$n}_publication"] = new CharField(array('required'=>FALSE));
-            $this["item_{$n}_pubdate"] = new DateField(array('required'=>FALSE));
-            $this["item_{$n}_url"] = new URLField(array('required'=>FALSE));
-            $this["item_{$n}_copy"] = new FileField(array('required'=>FALSE));
+            $this["item_{$n}_title"] = new CharField(array('required'=>FALSE,'label'=>'Title'));
+            $this["item_{$n}_publication"] = new CharField(array('required'=>FALSE,'label'=>'Publication'));
+            $this["item_{$n}_pubdate"] = new DateField(array('required'=>FALSE,'label'=>'Date of first publication'));
+            $this["item_{$n}_url"] = new URLField(array('required'=>FALSE,'label'=>'URL'));
+            $this["item_{$n}_copy"] = new FileField(array('required'=>FALSE,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }
 
         $this['publication_contact'] = new CharField(array('required'=>FALSE, 'label'=>'Contact name'));
@@ -84,89 +96,9 @@ class JournalismEntryHandler {
         $this->render_page($f);
     }
 
-
-
-    // the main template for filing an entry
     function render_page( $f ) {
-        // TODO: add a MAX_FILE_SIZE hidden element to enable early-out on
-        // oversize files
-        template_header();
-
-        // TODO - check:
-        // need to send in cover art?
-        // deadline
-        // pubdate eligiblity range
-        // contact details (not katriona)
-?>
-
-<h1>Journalism Prize !!!2013: Entry form</h1>
-<hr/>
-<p>
-The submission deadline is <strong>!!! Wednesday 9th January, 2013</strong>.
-</p>
-<p>
-Journalism Prize entries should consist of between four and six items,
-which may be printed articles (in print or online), blog posts, radio broadcasts
-or television packages. A byline photograph with no rights reserved must be
-submitted with every entry.
-Entry is FREE and there are no charges at any point. All work published for
-the first time between 1st January !!!2013 and 31st December !!!2013 is eligible.
-Entrants must have a clear relationship with the UK or Ireland (including,
-but not limited to, residency, citizenship or first publication).
-</p>
-<p>The full list of rules is available on <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules">theorwellprize.co.uk</a>.</p>
-<p>If you have any queries, please contact !!!katriona.lewis@mediastandardstrust.org or 0207 229 5722.</p>
-
-<form enctype="multipart/form-data" method="POST">
-<?php if($f->errors) { ?>
-<div class="form-error">Please correct the fields marked in red, then try submitting the form again</div>
-<?php } ?>
-
-<fieldset>
-<legend>Journalist</legend>
-<?php fld($f['journo_first_name']); ?>
-<?php fld($f['journo_last_name']); ?>
-<?php fld($f['journo_address']); ?>
-<?php fld($f['journo_email']); ?>
-<?php fld($f['journo_phone']); ?>
-<?php fld($f['journo_photo']); ?>
-<?php fld($f['link_with_uk_or_ireland']); ?>
-</fieldset>
-
-<fieldset>
-<legend>Items (articles, broadcasts, etc)</legend>
-<?php for($n=1; $n<=6; ++$n) { ?>
-<?php fld($f["item_{$n}_title"]); ?>
-<?php fld($f["item_{$n}_publication"]); ?>
-<?php fld($f["item_{$n}_pubdate"]); ?>
-<?php fld($f["item_{$n}_url"]); ?>
-<?php fld($f["item_{$n}_copy"]); ?>
-<?php } ?>
-</fieldset>
-
-<fieldset>
-<legend>Publication</legend>
-<?php fld($f['publication_contact']); ?>
-<?php fld($f['publication_email']); ?>
-<?php fld($f['publication_phone']); ?>
-<?php fld($f['publication_address']); ?>
-</fieldset>
-
-
-<fieldset>
-<legend>Disclaimer</legend>
-<p>I declare that this work, submitted for consideration for the Orwell Prize !!!YEAR, is wholly or substantially that of the names author or authors, and does not contain any plagiarised or unacknowledged material.</p>
-<?php fld($f['declaration']); ?>
-</fieldset>
-
-<input type="submit" value="Submit Entry"/>
-</form>
-<br/>
-
-<?php
-        template_footer();
+        include "templates/journalism.php";
     }
-
 
     function sanity_check() {
         if(!file_exists($this->upload_dir)) {
@@ -244,8 +176,8 @@ but not limited to, residency, citizenship or first publication).
 try {
     $v = new JournalismEntryHandler();
     $v->handle();
-} catch(Exception $e) {
-    template_pearshaped($e);
+} catch(Exception $err) {
+    include "templates/pearshaped.php";
 }
 
 ?>

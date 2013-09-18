@@ -31,7 +31,7 @@ textarea { width: 100%; }
 input { display: block; }
 label { display: block; font-weight: bold; color: #000; }
 
-.helptext { color: #444; font-size: smaller; }
+.helptext { display: block; color: #444; font-size: smaller; }
 .errorlist { list-style: none; color: #c00; font-weight: bold; margin:0; padding: 0.2em 0; }
 
 fieldset {border: none; padding: 0; margin: 0; }
@@ -48,6 +48,18 @@ legend {
 .fld-error input { border: solid 1px #c00; }
 .fld-required {}
 .fld-required label:after { content:"*"; color: #c00; font-weight: bold; }
+
+
+.fld-compact {
+    margin: 0 0 1em 2em;
+}
+
+.fld-compact .fld {
+    padding: 0;
+    margin: 0.2em 0;
+}
+
+
 
 .form-error { border: 2px solid #c00; color: #c00; font-weight: bold; margin: 1em 0; padding: 0.5em; }
 
