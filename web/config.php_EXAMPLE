@@ -1,4 +1,8 @@
 <?php
+$g_root="/home/ben/proj/orwellentry";
+
+// add our include dir to the path
+set_include_path(get_include_path() . PATH_SEPARATOR . "{$g_root}/inc");
 
 $g_config = array(
     'book'=>array(
