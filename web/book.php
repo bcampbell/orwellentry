@@ -2,7 +2,7 @@
 
 require_once "config.php";
 require_once "common.php";
-
+require_once "PHPMailer/class.phpmailer.php";
 require_once "drongo-forms/forms.php";
 
 
@@ -41,7 +41,7 @@ class BookEntryForm extends Form {
             'choices'=>$relationship_choices,
             'help_text'=>'See point 9 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
         $this['link_other'] = new CharField(array('required'=>FALSE,'label'=>""));
-        $this['author_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email", 'help_text'=>'Email address of the author'));
+        $this['author_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email" ));
         $this['author_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['author_address'] = new CharField(array('required'=>FALSE, 'label'=>"Address", 'widget'=>'TextArea' ));
         $this['author_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Phone"));
@@ -55,6 +55,10 @@ class BookEntryForm extends Form {
         $this['agent_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email"));
         $this['agent_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea', 'label'=>"Address" ));
         $this['agent_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Telephone number"));
+
+        $this['primary_contact'] = new ChoiceField( array(
+            'required'=>TRUE,
+            'choices'=>array('author'=>"Author", 'publisher'=>"Publisher", 'agent'=>"Agent") ));
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
     }
@@ -170,14 +174,57 @@ class BookEntryHandler {
         if( file_put_contents( $this->entries_file, $line, FILE_APPEND|LOCK_EX) === FALSE ) {
             throw new Exception("Internal error - couldn't record details");
         }
+
+        // send out an email alert with uploaded files attached
+        $attachments = array($this->entries_file);
+        if($data['book_cover']) {
+            $attachments[] = "{$this->upload_dir}/{$data['book_cover']}";
+        };
+        $this->send_alert($data,$attachments);
     }
 
+
+    function send_alert($entry_data, $filenames=array()) {
+        $mail = new PHPMailer();
+/*
+$mail->SMTPDebug = 2;
+$mail->isSMTP();  // telling the class to use SMTP
+$mail->SMTPAuth   = true;                // enable SMTP authentication
+$mail->Port       = 25;                  // set the SMTP port
+$mail->Host       = "localhost"; // SMTP server
+ */
+
+        $mail->From = 'theorwellprize@mediastandardstrust.org';
+        $mail->addAddress('ben@scumways.com');
+
+//        $mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+        foreach( $filenames as $file) {
+            $mail->addAttachment("{$this->upload_dir}/{$file}",$file);
+        }
+//        $mail->isHTML(true);                                  // Set email format to HTML
+
+        $mail->Subject = "Entry for orwell {$this->shortname} prize";
+
+        $msg = "Here is the submitted data:\n\n";
+        foreach($entry_data as $key=>$value) {
+            $msg .= "$key: $value\n";
+        }
+
+        $mail->Body    = $msg;
+
+        if(!$mail->send()) {
+           echo 'Message could not be sent.';
+           echo 'Mailer Error: ' . $mail->ErrorInfo;
+           exit;
+        }
+    }
 
 }
 
 try {
     $v = new BookEntryHandler();
-    $v->handle();
+    $v->send_alert(array("foo"=>"1","bar"=>"wibble"));
+//    $v->handle();
 } catch(Exception $err) {
     include "templates/pearshaped.php";
 }

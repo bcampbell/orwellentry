@@ -45,6 +45,7 @@ but not limited to, residency, citizenship or first publication).
 <?php fld($f['author_last_name']); ?>
 <?php fld_select_with_other($f['link_with_uk_or_ireland'],$f['link_other']); ?>
 <?php fld($f['book_cover']); ?>
+<?php fld($f['primary_contact']); ?>
 </fieldset>
 
 <fieldset>

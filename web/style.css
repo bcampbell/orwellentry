@@ -16,6 +16,7 @@
     font-style: normal;
 }
 
+/*
 @font-face {
     font-family: 'GillSansItalic';
     src: url('fonts/gni_____-webfont.eot');
@@ -23,7 +24,7 @@
     font-weight: normal;
     font-style: normal;
 }
-
+*/
 
 body {
     color: #444;
@@ -108,7 +109,10 @@ body {
 
 /* modules */
 
-.address { margin-left: 2em; /* font-weight: bold; */ }
+.address {
+    margin-left: 2em; /* font-weight: bold; */
+    font-style: italic;
+}
 
 /* page header */
 
