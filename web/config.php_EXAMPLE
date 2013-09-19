@@ -4,12 +4,21 @@ $g_root="/home/ben/proj/orwellentry";
 // add our include dir to the path
 set_include_path(get_include_path() . PATH_SEPARATOR . "{$g_root}/inc");
 
+// config for email alerts
+$alert_config = array(
+    'from'=>'theorwellprize@mediastandardstrust.org',
+    'recipients'=>array('nobody@example.com'),
+);
+
+// config for each form
 $g_config = array(
     'book'=>array(
-        'upload_dir' => '/tmp/entry_uploads/book',
+        'upload_dir' => '/tmp/entries/book',
+        'alert' => $alert_config,
     ),
     'journalism'=>array(
-        'upload_dir' => '/tmp/entry_uploads/journalism',
+        'upload_dir' => '/tmp/entries/journalism',
+        'alert' => $alert_config,
     ),
 );
 

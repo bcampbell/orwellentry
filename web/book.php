@@ -2,7 +2,6 @@
 
 require_once "config.php";
 require_once "common.php";
-require_once "PHPMailer/class.phpmailer.php";
 require_once "drongo-forms/forms.php";
 
 
@@ -80,151 +79,29 @@ class BookEntryForm extends Form {
 
 
 
-class BookEntryHandler {
+class BookEntryHandler extends BaseEntryHandler {
     function __construct() {
-        global $g_config;
-        $this->shortname = "book";
-        $this->upload_dir = $g_config[$this->shortname]['upload_dir'];
-        $this->entries_file = "{$this->upload_dir}/{$this->shortname}_entries.csv";
-
-        $this->sanity_check();
-    }
-
-    function handle()
-    {
-        if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $f= new BookEntryForm($_POST,$_FILES);
-            if($f->is_valid()) {
-                $this->process($f);
-                // redirect to prevent doubleposting
-                header("HTTP/1.1 303 See Other");
-                header("Location: /thanks?entered={$this->shortname}");
-                return;
-            }
-        } else {
-            // provide an unbound form
-            $f = new BookEntryForm(null,null);
-        }
-
-        $this->render_page($f);
-    }
-
-
-
-    // the main template for filing an entry
-    function render_page( $f ) {
-        include "templates/book.php";
-    }
-
-    function sanity_check() {
-        if(!file_exists($this->upload_dir)) {
-            throw new Exception("Internal error - Output dir doesn't exist ({$this->upload_dir})");
-        }
-        if(!is_writable($this->upload_dir)) {
-            throw new Exception("Internal error - Output dir isn't writable ({$this->upload_dir})");
-        }
+        parent::__construct('book','BookEntryForm');
     }
 
 
     // cook the data to handle any uploaded cover images
     function cook_data(&$data) {
-        if( $data['book_cover'] ) {
-            // use the book title as the basis for filename
-            $ext = pathinfo($data['book_cover']['name'], PATHINFO_EXTENSION);
-            $cover_file = preg_replace("/[^a-zA-Z\.]/","", $data['book_title']);
-            if(!$cover_file) {
-                throw new Exception("Internal error - couldn't save cover image because of bad name ({$cover_file})");
-            }
-            $cover_file .= ".".$ext;
-
-            if(move_uploaded_file($data['book_cover']['tmp_name'], "$this->upload_dir/$cover_file") !== TRUE) {
-                throw new Exception("Internal error - couldn't save cover image ({$cover_file})");
-            }
-
-            $data['book_cover'] = $cover_file;
-        }
+        $this->cook_file($data, "book_cover", $data['book_title']);
     }
 
-    // a valid form has been submitted - handle it!
-    function process($f) {
-        $this->sanity_check();
-
-        $data = $f->cleaned_data;
-
-        $this->cook_data($data);
-
-        // add a new entry to the csv file
-
-        // if starting new file, output field names in first row
-        if(!file_exists($this->entries_file)) {
-            $fieldnames = array_keys($data);
-            if(file_put_contents($this->entries_file, join(',',$fieldnames) . "\n") === FALSE) {
-                throw new Exception("Internal error - couldn't create entry list ({$this->entries_file})");
-            }
-        }
-
-        // format a line of data
-        $obuf = fopen('php://output', 'w');
-        ob_start();
-        fputcsv($obuf, $data);
-        fclose($obuf);
-        $line = ob_get_clean();
-
-        // append it (with locking in case of simultaneous access!)
-        if( file_put_contents( $this->entries_file, $line, FILE_APPEND|LOCK_EX) === FALSE ) {
-            throw new Exception("Internal error - couldn't record details");
-        }
-
-        // send out an email alert with uploaded files attached
+    function do_alert($data) {
+    // send out an email alert with the csv file and uploaded files
         $attachments = array($this->entries_file);
         if($data['book_cover']) {
             $attachments[] = "{$this->upload_dir}/{$data['book_cover']}";
         };
-        $this->send_alert($data,$attachments);
+
+        $subject = "Orwell {$this->shortname} entry: '${data['book_title']}'";
+        $this->email($subject,$data,$attachments);
     }
-
-
-    function send_alert($entry_data, $filenames=array()) {
-        $mail = new PHPMailer();
-	//$mail->isSendmail();
-/*
-$mail->SMTPDebug = 2;
-$mail->isSMTP();  // telling the class to use SMTP
-$mail->SMTPAuth   = true;                // enable SMTP authentication
-$mail->Port       = 25;                  // set the SMTP port
-$mail->Host       = "localhost"; // SMTP server
- */
-
-        $mail->From = 'theorwellprize@mediastandardstrust.org';
-        $mail->addAddress('ben@scumways.com');
-
-//        $mail->WordWrap = 50;                                 // Set word wrap to 50 characters
-        foreach( $filenames as $file) {
-            $mail->addAttachment("{$this->upload_dir}/{$file}",$file);
-        }
-//        $mail->isHTML(true);                                  // Set email format to HTML
-
-        $mail->Subject = "Orwell {$this->shortname} entry: '${data['book_title']}'";
-
-        $msg = "Here is the submitted data:\n\n";
-        foreach($entry_data as $key=>$value) {
-            $msg .= "$key: $value\n";
-        }
-
-        $mail->Body    = $msg;
-
-        if(!$mail->send()) {
-		// just fail quietly - don't bother the site user with this.
-		// TODO: should log it somewhere
-/*
-           echo 'Message could not be sent.';
-           echo 'Mailer Error: ' . $mail->ErrorInfo;
-           exit;
-*/
-        }
-    }
-
 }
+
 
 try {
     $v = new BookEntryHandler();

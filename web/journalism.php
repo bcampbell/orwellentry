@@ -84,65 +84,9 @@ class JournalismEntryForm extends Form {
 
 
 
-class JournalismEntryHandler {
+class JournalismEntryHandler extends BaseEntryHandler {
     function __construct() {
-        global $g_config;
-        $this->shortname = "journalism";
-        $this->upload_dir = $g_config[$this->shortname]['upload_dir'];
-        $this->entries_file = "{$this->upload_dir}/{$this->shortname}_entries.csv";
-
-        $this->sanity_check();
-    }
-
-    function handle()
-    {
-        if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $f= new JournalismEntryForm($_POST,$_FILES);
-            if($f->is_valid()) {
-                $this->process($f);
-                // redirect to prevent doubleposting
-                header("HTTP/1.1 303 See Other");
-                header("Location: /thanks?entered={$this->shortname}");
-                return;
-            }
-        } else {
-            // provide an unbound form
-            $f = new JournalismEntryForm(null,null);
-        }
-
-        $this->render_page($f);
-    }
-
-    function render_page( $f ) {
-        include "templates/journalism.php";
-    }
-
-    function sanity_check() {
-        if(!file_exists($this->upload_dir)) {
-            throw new Exception("Internal error - Output dir doesn't exist ({$this->upload_dir})");
-        }
-        if(!is_writable($this->upload_dir)) {
-            throw new Exception("Internal error - Output dir isn't writable ({$this->upload_dir})");
-        }
-    }
-
-
-    function cook_file(&$data, $filefield, $namebase) {
-        if($data[$filefield]) {
-            // use namebase as the basis for filename
-            $ext = pathinfo($data[$filefield]['name'], PATHINFO_EXTENSION);
-            $cooked_file = strtolower(preg_replace("/[^-_0-9a-zA-Z\.]/","", $namebase));
-            if(!$cooked_file) {
-                throw new Exception("Internal error - couldn't save {$filefield} because of bad name ({$cooked_file})");
-            }
-            $cooked_file .= ".".$ext;
-
-            if(move_uploaded_file($data[$filefield]['tmp_name'], "{$this->upload_dir}/{$cooked_file}") !== TRUE) {
-                throw new Exception("Internal error - couldn't save {$filefield} ({$this->upload_dir}/{$cooked_file})");
-            }
-
-            $data[$filefield] = $cooked_file;
-        }
+        parent::__construct('journalism','JournalismEntryForm');
     }
 
 
@@ -156,38 +100,21 @@ class JournalismEntryHandler {
     }
 
 
-    // a valid form has been submitted - handle it!
-    function process($f) {
-        $this->sanity_check();
-
-        $data = $f->cleaned_data;
-
-        $this->cook_data($data);
-
-        // add a new entry to the csv file
-
-        // if starting new file, output field names in first row
-        if(!file_exists($this->entries_file)) {
-            $fieldnames = array_keys($data);
-            if(file_put_contents($this->entries_file, join(',',$fieldnames) . "\n") === FALSE) {
-                throw new Exception("Internal error - couldn't create entry list ({$this->entries_file})");
+    function do_alert($data) {
+        // send out an email alert with the csv file and uploaded files
+        $attachments = array($this->entries_file);
+        if($data['journo_photo']) {
+            $attachments[] = "{$this->upload_dir}/{$data['journo_photo']}";
+        };
+        for($n=1; $n<=6; ++$n) {
+            if($data["item_{$n}_copy"]) {
+                $attachments[] = "{$this->upload_dir}/{$data["item_{$n}_copy"]}";
             }
         }
 
-        // format a line of data
-        $obuf = fopen('php://output', 'w');
-        ob_start();
-        fputcsv($obuf, $data);
-        fclose($obuf);
-        $line = ob_get_clean();
-
-        // append it (with locking in case of simultaneous access!)
-        if( file_put_contents( $this->entries_file, $line, FILE_APPEND|LOCK_EX) === FALSE ) {
-            throw new Exception("Internal error - couldn't record details");
-        }
+        $subject = "Orwell {$this->shortname} entry: '{$data['journo_first_name']} {$data['journo_last_name']}'";
+        $this->email($subject,$data,$attachments);
     }
-
-
 }
 
 try {
