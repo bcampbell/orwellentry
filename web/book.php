@@ -186,6 +186,7 @@ class BookEntryHandler {
 
     function send_alert($entry_data, $filenames=array()) {
         $mail = new PHPMailer();
+	//$mail->isSendmail();
 /*
 $mail->SMTPDebug = 2;
 $mail->isSMTP();  // telling the class to use SMTP
@@ -203,7 +204,7 @@ $mail->Host       = "localhost"; // SMTP server
         }
 //        $mail->isHTML(true);                                  // Set email format to HTML
 
-        $mail->Subject = "Entry for orwell {$this->shortname} prize";
+        $mail->Subject = "Orwell {$this->shortname} entry: '${data['book_title']}'";
 
         $msg = "Here is the submitted data:\n\n";
         foreach($entry_data as $key=>$value) {
@@ -213,9 +214,13 @@ $mail->Host       = "localhost"; // SMTP server
         $mail->Body    = $msg;
 
         if(!$mail->send()) {
+		// just fail quietly - don't bother the site user with this.
+		// TODO: should log it somewhere
+/*
            echo 'Message could not be sent.';
            echo 'Mailer Error: ' . $mail->ErrorInfo;
            exit;
+*/
         }
     }
 
@@ -223,8 +228,7 @@ $mail->Host       = "localhost"; // SMTP server
 
 try {
     $v = new BookEntryHandler();
-    $v->send_alert(array("foo"=>"1","bar"=>"wibble"));
-//    $v->handle();
+    $v->handle();
 } catch(Exception $err) {
     include "templates/pearshaped.php";
 }
