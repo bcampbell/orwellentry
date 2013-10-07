@@ -17,5 +17,7 @@
 <?php startblock('main') ?>
 <?php endblock() ?>
 </div>
+<footer>
+</footer>
 </body>
 </html>

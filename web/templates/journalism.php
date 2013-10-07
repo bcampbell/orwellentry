@@ -8,11 +8,10 @@
 
 
 <?php startblock('main') ?>
-
+<div class="content">
 <h1>Journalism Prize 2014: Entry form</h1>
-<hr/>
 <p>
-The submission deadline is <strong>15th January, 2014</strong>.
+The submission deadline is <em>Wednesday 15th January, 2014</em>.
 </p>
 <p>
 Journalism Prize entries should consist of between four and six submissions,
@@ -30,7 +29,6 @@ Entrants must have a clear relationship with the UK or Ireland (including,
 but not limited to, residency, citizenship or first publication).
 </p>
 <p>For details, see the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules">full list of rules</a>.</p>
-<p>If you have any queries, please contact theorwellprize@mediastandardstrust.org or 0207 848 7930.</p>
 
 <form enctype="multipart/form-data" method="POST">
 <?php if($f->errors) { ?>
@@ -39,6 +37,7 @@ but not limited to, residency, citizenship or first publication).
 
 <fieldset>
 <legend>Journalist</legend>
+<div class="fieldset-notes"><span>*</span> Required fields</div>
 <?php fld($f['journo_first_name']); ?>
 <?php fld($f['journo_last_name']); ?>
 <?php fld($f['journo_address']); ?>
@@ -56,14 +55,14 @@ but not limited to, residency, citizenship or first publication).
 $nums = array('zero','one','two','three','four','five','six');
 for($n=1; $n<=6; ++$n) {
 ?>
-<h3>Submission <?=$nums[$n]?></h3>
-<div class="fld-compact">
+<fieldset class="submission-grp">
+<legend><?= $n ?></legend>
 <?php fld($f["item_{$n}_title"]); ?>
 <?php fld($f["item_{$n}_publication"]); ?>
 <?php fld($f["item_{$n}_pubdate"]); ?>
 <?php fld($f["item_{$n}_url"]); ?>
 <?php fld($f["item_{$n}_copy"]); ?>
-</div>
+</fieldset>
 <?php } ?>
 </fieldset>
 
@@ -79,11 +78,18 @@ for($n=1; $n<=6; ++$n) {
 <fieldset>
 <legend>Disclaimer</legend>
 <p>I declare that this work, submitted for consideration for the Orwell Prize 2014, is wholly or substantially that of the names author or authors, and does not contain any plagiarised or unacknowledged material.</p>
-<?php fld($f['declaration']); ?>
+<?php fld_label_right($f['declaration']); ?>
 </fieldset>
 
 <input type="submit" value="Submit Entry"/>
 </form>
+</div>
+
+<div class="sidebar">
+<h3>Any questions?</h3>
+<p>If you have any queries, please <a href="mailto:theorwellprize@mediastandardstrust.org">email us</a> or call 0207 848 7930.</p>
+</div>
+
 
 <script>
 var select = document.getElementById("link_with_uk_or_ireland");

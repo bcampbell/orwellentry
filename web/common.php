@@ -37,6 +37,22 @@ function fld_select_with_other($f, $other) {
 }
 
 
+function fld_label_right($f, $extra_css="") {
+?>
+<div class="fld <?=$extra_css?> <?=$f->css_classes() ?>">
+<?= $f ?>
+<?= $f->label_tag() ?>
+<span class="helptext"><?= $f->help_text ?></span>
+<?php if($f->errors) { ?>
+<ul class="errorlist">
+<?php foreach($f->errors as $err) { ?>
+<li><?= $err ?></li>
+</ul><?php } ?>
+<?php } ?>
+</div>
+<?php
+}
+
 
 class BaseEntryHandler {
     function __construct($shortname, $formtype) {
