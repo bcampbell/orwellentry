@@ -33,7 +33,7 @@ class JournalismEntryForm extends Form {
         $this['journo_last_name'] = new CharField( array( 'required'=>TRUE, 'label'=>"Last name"));
         $this['journo_address'] = new CharField(array('required'=>TRUE, 'label'=>"Correspondence address", 'widget'=>'TextArea' ));
         $this['journo_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email" ));
-        $this['journo_twitter'] = new CharField(array('required'=>TRUE, 'label'=>"Twitter"));
+        $this['journo_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['journo_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Telephone number"));
         $this['link_with_uk_or_ireland'] = new ChoiceField(array(
             'label'=>'Relationship of entry to UK or Ireland',
