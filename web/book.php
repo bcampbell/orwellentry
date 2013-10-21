@@ -28,7 +28,7 @@ class BookEntryForm extends Form {
 
         $this['book_title'] = new CharField(
             array( 'required'=>TRUE, 'label'=>"Title"));
-        $this['publication_date'] = new DateField(array( 'required'=>FALSE, 'help_text'=>"" ));
+        $this['publication_date'] = new DateField(array( 'required'=>TRUE, 'help_text'=>"" ));
         $this['author_first_name'] = new CharField(array( 'required'=>TRUE ));
         $this['author_last_name'] = new CharField(array( 'required'=>TRUE ));
         $this['book_cover'] = new FileField(array(
@@ -40,15 +40,15 @@ class BookEntryForm extends Form {
             'choices'=>$relationship_choices,
             'help_text'=>'See point 9 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
         $this['link_other'] = new CharField(array('required'=>FALSE,'label'=>""));
-        $this['author_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email" ));
+        $this['author_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email" ));
         $this['author_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
-        $this['author_address'] = new CharField(array('required'=>FALSE, 'label'=>"Address", 'widget'=>'TextArea' ));
-        $this['author_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Phone"));
+        $this['author_address'] = new CharField(array('required'=>TRUE, 'label'=>"Address", 'widget'=>'TextArea' ));
+        $this['author_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Phone"));
 
         $this['publisher_name'] = new CharField(array('required'=>TRUE, 'label'=>"Name"));
         $this['publisher_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email"));
-        $this['publisher_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea', 'label'=>"Address" ));
-        $this['publisher_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Telephone number"));
+        $this['publisher_address'] = new CharField(array('required'=>TRUE, 'widget'=>'TextArea', 'label'=>"Address" ));
+        $this['publisher_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Telephone number"));
 
         $this['agent_name'] = new CharField(array('required'=>FALSE, 'label'=>"Name"));
         $this['agent_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email"));
