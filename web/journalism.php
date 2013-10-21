@@ -56,10 +56,10 @@ class JournalismEntryForm extends Form {
             $this["item_{$n}_copy"] = new FileField(array('required'=>$req,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }
 
-        $this['publication_contact'] = new CharField(array('required'=>FALSE, 'label'=>'Contact name'));
-        $this['publication_email'] = new EmailField(array('required'=>FALSE, 'label'=>'Email address'));
-        $this['publication_phone'] = new CharField(array('required'=>FALSE, 'label'=>'Telephone number'));
-        $this['publication_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea', 'label'=>'Address' ));
+        $this['publication_contact'] = new CharField(array('required'=>TRUE, 'label'=>'Contact name'));
+        $this['publication_email'] = new EmailField(array('required'=>TRUE, 'label'=>'Email address'));
+        $this['publication_phone'] = new CharField(array('required'=>TRUE, 'label'=>'Telephone number'));
+        $this['publication_address'] = new CharField(array('required'=>TRUE, 'widget'=>'TextArea', 'label'=>'Address' ));
 
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
