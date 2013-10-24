@@ -17,7 +17,7 @@ The Orwell Prize<br/>
 Kings College London<br/>
 Strand Bridge House<br/>
 138-142 The Strand<br/>
-London WC2R 2LS
+London WC2R 1HH
 </div>
 <p>
 The submission deadline is <em>Wednesday 15th January, 2014</em>.

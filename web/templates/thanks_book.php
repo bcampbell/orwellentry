@@ -8,7 +8,7 @@ The Orwell Prize<br/>
 Kings College London<br/>
 Strand Bridge House<br/>
 138-142 The Strand<br/>
-London WC2R 2LS<br/>
+London WC2R 1HH<br/>
 </div>
 </p>
 <p>You will be notified when the submission is complete.</p>
