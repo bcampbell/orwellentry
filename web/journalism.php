@@ -51,7 +51,7 @@ class JournalismEntryForm extends Form {
             $req = ($n<=4)?TRUE:FALSE;
             $this["item_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["item_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication'));
-            $this["item_{$n}_pubdate"] = new DateField(array('required'=>$req,'label'=>'Date of first publication'));
+            $this["item_{$n}_pubdate"] = new DateField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy'));
             $this["item_{$n}_url"] = new URLField(array('required'=>FALSE,'label'=>'URL'));
             $this["item_{$n}_copy"] = new FileField(array('required'=>$req,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }
