@@ -28,7 +28,7 @@ class BookEntryForm extends Form {
 
         $this['book_title'] = new CharField(
             array( 'required'=>TRUE, 'label'=>"Title"));
-        $this['publication_date'] = new DateField(array( 'required'=>TRUE, 'help_text'=>"" ));
+        $this['publication_date'] = new CharField(array( 'required'=>TRUE, 'help_text'=>"dd/mm/yyyy" ));
         $this['author_first_name'] = new CharField(array( 'required'=>TRUE ));
         $this['author_last_name'] = new CharField(array( 'required'=>TRUE ));
         $this['book_cover'] = new FileField(array(
