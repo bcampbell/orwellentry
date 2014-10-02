@@ -82,17 +82,127 @@ class SocialEntryForm extends Form {
 
     //
     function clean() {
-        // make sure that link is filled in if dropdown is set to "other"
-        $link = $this->cleaned_data['link_with_uk_or_ireland'];
-        $link_other = $this->cleaned_data['link_other'];
-        if($link=='other' && !$link_other) {
-            print("<pre>'$link' '$link_other'</pre>");
-            $this->_errors["link_with_uk_or_ireland"] = array("Please specify the link to the UK or Ireland");
-            unset($this->cleaned_data['link_with_uk_or_ireland']);
-            unset($this->cleaned_data['link_other']);
+        // check sections are complete or empty
+
+        // make sure at least two sections filled in
+        $section_cnt = $this->chk_writing() +
+            $this->chk_video() +
+            $this->chk_audio() +
+            $this->chk_social() +
+            $this->chk_photo();
+
+
+        if($section_cnt < 2 ) {
+            $this->_errors['__all__'] = array("Please submit at least two kinds of work");
         }
 
         return $this->cleaned_data;
+    }
+
+
+    function chk_writing() {
+        $cnt = 0;
+        $fields = array('title','publication','pubdate','url','copy');
+        $fields_req = array('title','publication','pubdate','copy');
+        $prefix = 'writing';
+        for( $n=1; $n<=3; ++$n) {
+            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+                $cnt++;
+            }
+        }
+        return ($cnt>0) ? 1:0;
+    }
+
+    function chk_video() {
+        $cnt = 0;
+        $fields = array('title','provider','pubdate','url','password');
+        $fields_req = array('title','pubdate','url');
+        $prefix = 'video';
+        for( $n=1; $n<=3; ++$n) {
+            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+                $cnt++;
+            }
+        }
+        return ($cnt>0) ? 1:0;
+    }
+
+    function chk_audio() {
+        $cnt = 0;
+        $fields = array('title','provider','pubdate','url','password');
+        $fields_req = array('title','pubdate','url');
+        $prefix = 'audio';
+        for( $n=1; $n<=3; ++$n) {
+            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+                $cnt++;
+            }
+        }
+        return ($cnt>0) ? 1:0;
+    }
+
+    function chk_photo() {
+        $cnt = 0;
+        $fields = array('title','date','publication','url','photo');
+        $fields_req = array('title','date','publication','photo');
+        $prefix = 'photo';
+        for( $n=1; $n<=3; ++$n) {
+            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+                $cnt++;
+            }
+        }
+        return ($cnt>0) ? 1:0;
+    }
+
+    function chk_block($prefix, $fields,$fields_required,$n) {
+
+        $ok = TRUE;
+        $used = FALSE;
+        foreach ($fields as $postfix) {
+            $fld = "{$prefix}_{$n}_{$postfix}";
+            $val = $this->cleaned_data[$fld];
+            if($val != "" && !is_null($val)) {
+                $used = TRUE;
+            }
+        }
+        if($used) {
+            foreach ($fields_required as $postfix) {
+                $fld = "{$prefix}_{$n}_{$postfix}";
+                $val = $this->cleaned_data[$fld];
+                if($val == "" || is_null($val)) {
+                    $this->_errors[$fld] = array("This field is required");
+                    unset($this->cleaned_data[$fld]);
+                    $ok = FALSE;
+                }
+            }
+        }
+        return ($used && $ok); 
+    }
+
+    function chk_social() {
+        $fields = array('username','url','copy');
+        $fields_req = array('username','url');
+
+        $used = FALSE;
+        $ok = TRUE;
+        foreach ($fields as $postfix) {
+            $fld = "social_{$postfix}";
+            $val = $this->cleaned_data[$fld];
+            if($val != "" && !is_null($val)) {
+                $used = TRUE;
+            }
+        }
+        if($used) {
+            foreach ($fields as $postfix) {
+                $fld = "social_{$postfix}";
+                $val = $this->cleaned_data[$fld];
+                if($val == "" || is_null($val)) {
+                    $this->_errors[$fld] = array("This field is required");
+                    unset($this->cleaned_data[$fld]);
+                    $ok = FALSE;
+                }
+            }
+        }
+
+        return ($used && $ok)?1:0;
     }
 }
 
