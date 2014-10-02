@@ -50,7 +50,7 @@ class SocialEntryForm extends Form {
             $this["video_{$n}_provider"] = new CharField(array('required'=>$req,'label'=>'Channel/Content provider'));
             $this["video_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy'));
             $this["video_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
-            $this["video_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', help_text=>"Please don't use an important password! It's just to prevent casual viewing by others."));
+            $this["video_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', 'help_text'=>"Please don't use an important password! It's just to prevent casual viewing by others."));
         }
 
         for( $n=1; $n<=3; ++$n) {
@@ -59,7 +59,7 @@ class SocialEntryForm extends Form {
             $this["audio_{$n}_provider"] = new CharField(array('required'=>$req,'label'=>'Channel/Content provider'));
             $this["audio_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first broadcast/release', 'help_text'=>'dd/mm/yyyy'));
             $this["audio_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
-            $this["audio_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', help_text=>"Please don't use an important password! It's just to prevent casual viewing by others."));
+            $this["audio_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', 'help_text'=>"Please don't use an important password! It's just to prevent casual viewing by others."));
         }
 
         $this["social_username"] = new CharField(array('required'=>FALSE,'label'=>'Username'));
@@ -215,20 +215,23 @@ class SocialEntryHandler extends BaseEntryHandler {
 
 
     function cook_data(&$data) {
-        // cook the data to handle any uploaded cover images
-        /*
+        // cook the data to handle any uploaded files
         $this->cook_file($data, "journo_photo", "{$data['journo_first_name']}_{$data['journo_last_name']}");
-        for($n=1; $n<=6; ++$n) {
-            $this->cook_file($data, "item_{$n}_copy", "{$data['journo_first_name']}_{$data['journo_last_name']}_item_{$n}");
+        for($n=1; $n<=3; ++$n) {
+            $this->cook_file($data, "writing_{$n}_copy", "{$data['journo_first_name']}_{$data['journo_last_name']}_writing_{$n}");
         }
-        */
+        for($n=1; $n<=3; ++$n) {
+            $this->cook_file($data, "photo_{$n}_photo", "{$data['journo_first_name']}_{$data['journo_last_name']}_photo_{$n}");
+        }
+        $this->cook_file($data, "social_copy", "{$data['journo_first_name']}_{$data['journo_last_name']}_social");
     }
 
 
     function do_alert($data) {
-        /*
         // send out an email alert with the csv file and uploaded files
         $attachments = array($this->entries_file);
+
+        /*
         if($data['journo_photo']) {
             $attachments[] = "{$this->upload_dir}/{$data['journo_photo']}";
         };
@@ -237,10 +240,10 @@ class SocialEntryHandler extends BaseEntryHandler {
                 $attachments[] = "{$this->upload_dir}/{$data["item_{$n}_copy"]}";
             }
         }
+        */
 
         $subject = "Orwell {$this->shortname} entry: '{$data['journo_first_name']} {$data['journo_last_name']}'";
         $this->email($subject,$data,$attachments);
-        */
     }
 }
 
