@@ -1,7 +1,7 @@
 <?php require_once "common.php"; ?>
 <?php include 'base.php' ?>
 
-<?php startblock('title') ?>The Orwell Journalism Prize 2014: Entry form<?php endblock() ?>
+<?php startblock('title') ?>The Orwell Prize for Exposing Britain's Social Evils 2015: Entry form<?php endblock() ?>
 
 <?php startblock('head_extra') ?>
 <?php endblock() ?>
@@ -68,7 +68,7 @@ Please enter your details below. If entering as part of a small team of journali
 <?php
 for($n=1; $n<=3; ++$n) {
 ?>
-<fieldset class="submission-grp">
+<fieldset class="submission-grp submission-grp-writing">
 <legend><?= $n ?></legend>
 <?php fld($f["writing_{$n}_title"]); ?>
 <?php fld($f["writing_{$n}_publication"]); ?>
@@ -89,7 +89,7 @@ content would be fine.
 <?php
 for($n=1; $n<=3; ++$n) {
 ?>
-<fieldset class="submission-grp">
+<fieldset class="submission-grp submission-grp-video">
 <legend><?= $n ?></legend>
 <?php fld($f["video_{$n}_title"]); ?>
 <?php fld($f["video_{$n}_provider"]); ?>
@@ -108,7 +108,7 @@ Please provide permanent, accessible, and non-expiring URLs to audio content.
 <?php
 for($n=1; $n<=3; ++$n) {
 ?>
-<fieldset class="submission-grp">
+<fieldset class="submission-grp submission-grp-audio">
 <legend><?= $n ?></legend>
 <?php fld($f["audio_{$n}_title"]); ?>
 <?php fld($f["audio_{$n}_provider"]); ?>
@@ -127,11 +127,11 @@ Please upload a PDF of social media content to a maximum of 3000 characters
 (or 20 tweets), or provide a link to a
 '<a href="http://www.storify.com">Storify</a>' story of equivalent length.
 </p>
-
+<div class="social-media">
 <?php fld($f["social_username"]); ?>
 <?php fld($f["social_url"]); ?>
 <?php fld($f["social_copy"]); ?>
-
+</div>
 </fieldset>
 
 
@@ -141,7 +141,7 @@ Please upload a PDF of social media content to a maximum of 3000 characters
 <?php
 for($n=1; $n<=3; ++$n) {
 ?>
-<fieldset class="submission-grp">
+<fieldset class="submission-grp submission-grp-photo">
 <legend><?= $n ?></legend>
 <?php fld($f["photo_{$n}_title"]); ?>
 <?php fld($f["photo_{$n}_date"]); ?>
@@ -169,7 +169,13 @@ for($n=1; $n<=3; ++$n) {
 </div>
 
 
+<script src="/helpers.js"></script>
 <script>
+    hideShow('.submission-grp-writing',0,"Add a writing submission");
+    hideShow('.submission-grp-video',0, "Add a video submission");
+    hideShow('.social-media',0, "Add a social media submission");
+    hideShow('.submission-grp-audio',0, "Add an audio submission");
+    hideShow('.submission-grp-photo',0, "Add a photo submission");
 </script>
 
 <?php endblock() ?>
