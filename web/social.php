@@ -144,7 +144,7 @@ class SocialEntryForm extends Form {
         foreach( $this->filefields as $fld) {
             $uploaded = $this->handler->find_uploaded_file($tok,$fld);
             if($uploaded !== NULL ) {
-                error_log("found uploaded file for $fld");
+                //error_log("found uploaded file for $fld");
                 unset( $this->_errors[$fld] );
                 // set the data to the name of the previously-uploaded file
                 // (instead of an array from $_FILES)
@@ -242,7 +242,7 @@ class SocialEntryForm extends Form {
             foreach ($fields_required as $postfix) {
                 $fld = "{$prefix}{$postfix}";
                 $val = array_key_exists($fld,$this->cleaned_data) ? $this->cleaned_data[$fld] : "";
-                error_log("CHK $fld: $val");
+                //error_log("CHK $fld: $val");
                 if($val == "" || is_null($val)) {
                     $this->_errors[$fld] = array("This field is required");
                     unset($this->cleaned_data[$fld]);

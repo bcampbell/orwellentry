@@ -35,6 +35,7 @@ but not limited to, residency, citizenship or first publication).
 <div class="form-error">Please correct the fields marked in red, then try submitting the form again</div>
 <?php } ?>
 
+<?= $f['async_upload_token'] ?>
 <fieldset>
 <legend>Journalist</legend>
 <div class="fieldset-notes"><span>*</span> Required fields</div>
@@ -94,5 +95,11 @@ for($n=1; $n<=6; ++$n) {
 <script src="/helpers.js"></script>
 <script>
 selOrOther("link_with_uk_or_ireland", "link_other", "other");
+hideShow('.submission-grp',4, "Add another submission");
+
+inputs = ( document.querySelectorAll('input[type="file"]'));
+for (var i=0; i<inputs.length; i++ ) {
+    fancyUpload(inputs[i]);
+}
 </script>
 <?php endblock() ?>

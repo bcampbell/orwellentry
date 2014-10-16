@@ -6,11 +6,14 @@ require_once "drongo-forms/forms.php";
 
 
 class BookEntryForm extends Form {
-    function __construct($data=null,$files=null) {
+    function __construct($data=null,$files=null,$handler=null) {
+        $this->handler = $handler;
         $opts = array(
             'label_suffix'=>'', // suppress a trailing ':' after labels
             /* 'prefix'=>'test', */
         );
+
+        $this->filefields = array('book_cover');
 
         parent::__construct($data,$files,$opts);
         // these should be opts?
@@ -25,6 +28,10 @@ class BookEntryForm extends Form {
             'foreign_correspondent'=>"Foreign correspondent for British or Irish publication",
             'resident_at_time_of_writing'=>"Resident in the UK or Ireland at the time of writing or publication",
             'other'=>"Other (please specify)");
+
+        // id to let us tie form submission to previously-uploaded files
+        $async_upload_token = bin2hex(openssl_random_pseudo_bytes(6));
+        $this['async_upload_token'] = new CharField( array('required'=>TRUE, 'initial'=>$async_upload_token, 'widget'=>'HiddenInput' ) ); 
 
         $this['book_title'] = new CharField(
             array( 'required'=>TRUE, 'label'=>"Title"));
@@ -63,6 +70,20 @@ class BookEntryForm extends Form {
     }
 
     function clean() {
+        // remove validation errors on any files that were previously uploaded
+        $tok = $this->cleaned_data['async_upload_token'];
+
+        foreach( $this->filefields as $fld) {
+            $uploaded = $this->handler->find_uploaded_file($tok,$fld);
+            if($uploaded !== NULL ) {
+                //error_log("found uploaded file for $fld");
+                unset( $this->_errors[$fld] );
+                // set the data to the name of the previously-uploaded file
+                // (instead of an array from $_FILES)
+                $this->cleaned_data[$fld] = $uploaded;
+            }
+        }
+
         // make sure that link is filled in if dropdown is set to "other"
         $link = $this->cleaned_data['link_with_uk_or_ireland'];
         $link_other = $this->cleaned_data['link_other'];

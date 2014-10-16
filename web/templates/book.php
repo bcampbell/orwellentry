@@ -36,6 +36,7 @@ but not limited to, residency, citizenship or first publication).
 <div class="form-error">Please correct the fields marked in red, then try submitting the form again</div>
 <?php } ?>
 
+<?= $f['async_upload_token'] ?>
 <fieldset>
 <legend>Book</legend>
 <div class="fieldset-notes"><span>*</span> Required fields</div>
@@ -90,6 +91,10 @@ but not limited to, residency, citizenship or first publication).
 <script src="/helpers.js"></script>
 <script>
 selOrOther("link_with_uk_or_ireland", "link_other", "other");
+inputs = ( document.querySelectorAll('input[type="file"]'));
+for (var i=0; i<inputs.length; i++ ) {
+    fancyUpload(inputs[i]);
+}
 </script>
 
 <?php endblock() ?>
