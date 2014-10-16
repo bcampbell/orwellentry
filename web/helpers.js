@@ -8,8 +8,19 @@ function hideShow(sel,initialShown,desc) {
         if (i<initialShown) {
             continue;
         }
+        // hide any which are empty
         var el = targs[i];
-        el.style.display = 'none';
+        var inps = el.querySelectorAll("input");
+        var cnt = 0;
+
+        for (var j =0;j<inps.length; j++) {
+            if(inps[j].value != "") {
+                cnt++;
+            }
+        }
+        if( cnt == 0 ) {
+            el.style.display = 'none';
+        }
     }
 
     var last = targs[targs.length-1];
@@ -51,7 +62,6 @@ function fancyUpload(targ) {
         targ.parentNode.insertAdjacentHTML('beforeend','<ul class="errorlist"><li></li></ul>');
         errorUI = targ.parentNode.querySelector(".errorlist li");
     }
-    console.log("FOO: ", errorUI);
 
     var progress = progressUI.querySelector("progress");
     var progressMsg = progressUI.querySelector(".uploader-progress-msg");
@@ -84,7 +94,6 @@ function fancyUpload(targ) {
 
     // when user picks a file...
     targ.addEventListener('change', function (evt) {
-        console.log(evt);
         var xhr = new XMLHttpRequest();
 
         var file = evt.target.files[0];
@@ -93,7 +102,6 @@ function fancyUpload(targ) {
 
 
         function cancelClicked(e) {
-            console.log("Clicked cancel");
             e.preventDefault();
             xhr.abort();
         }
@@ -113,7 +121,6 @@ function fancyUpload(targ) {
 
         // set up the upload
         xhr.upload.addEventListener('progress', function(e) {
-            console.log('xhr progress', e);
 
             if( e.lengthComputable ) {
                 var done = e.loaded, total = e.total;
@@ -125,7 +132,6 @@ function fancyUpload(targ) {
             }
         }, false);
         xhr.addEventListener("load", function(e) {
-            console.log('xhr load', e);
             if(xhr.status != 200 ) {
                 progressUI.style.display = 'none';
                 attachedUI.style.display = 'none';
@@ -145,7 +151,6 @@ function fancyUpload(targ) {
             targ.disabled = true;
         }, false);
         xhr.addEventListener("error", function(e) {
-            console.log('xhr error', e);
             progressUI.style.display = 'none';
             attachedUI.style.display = 'none';
             setError('upload failed');
@@ -153,7 +158,6 @@ function fancyUpload(targ) {
             targ.disabled = false;
         }, false);
         xhr.addEventListener("abort", function(e) {
-            console.log('xhr abort', e);
             clearError();
             targ.style.display = '';
             progressUI.style.display = 'none';
@@ -168,7 +172,6 @@ function fancyUpload(targ) {
         fd.append('async_upload_field', targ.name);
         fd.append('async_upload_file', file );
         fd.append('async_upload_token', token);
-        console.log("Uploading",fd);
 
 
         // configure ui
