@@ -14,7 +14,14 @@ class SocialEntryForm extends Form {
             /* 'prefix'=>'test', */
         );
 
-
+        $this->filefields = array('journo_photo',
+            'writing_1_copy',
+            'writing_2_copy',
+            'writing_3_copy',
+            'social_copy',
+            'photo_1_photo',
+            'photo_2_photo',
+            'photo_3_photo');
 
         parent::__construct($data,$files,$opts);
         // these should be opts?
@@ -83,6 +90,19 @@ class SocialEntryForm extends Form {
 
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
+
+        if(array_key_exists('async_upload_token', $_POST)) {
+            // check for already-uploaded files on the file fields:
+            $tok = $_POST['async_upload_token'];
+
+            foreach($this->filefields as $fld) {
+                if ($this->handler->find_uploaded_file($tok,$fld) !== NULL ) {
+                    // got one! set an attr on the field so the javascript knows...
+                    $this->fields[$fld]->widget->attrs['data-uploaded'] = "File already uploaded...";
+                }
+            } 
+        }
+
     }
 
 
@@ -92,19 +112,15 @@ class SocialEntryForm extends Form {
         // remove validation errors on any files that were previously uploaded
         $tok = $this->cleaned_data['async_upload_token'];
 
-        $filefields = array('journo_photo',
-            'writing_1_copy',
-            'writing_2_copy',
-            'writing_3_copy',
-            'social_copy',
-            'photo_1_photo',
-            'photo_2_photo',
-            'photo_3_photo');
 
-        foreach( $filefields as $fld) {
-            if ($this->handler->find_uploaded_file($tok,$fld) !== NULL ) {
+        foreach( $this->filefields as $fld) {
+            $uploaded = $this->handler->find_uploaded_file($tok,$fld);
+            if($uploaded !== NULL ) {
                 error_log("found uploaded file for $fld");
                 unset( $this->_errors[$fld] );
+                // set the data to the name of the previously-uploaded file
+                // (instead of an array from $_FILES)
+                $this->cleaned_data[$fld] = $uploaded;
             }
         }
         // check sections are complete or empty
@@ -125,10 +141,10 @@ class SocialEntryForm extends Form {
             $this->chk_photo();
 
 
-/*        if($section_cnt < 2 ) {
+        if($section_cnt < 2 ) {
             $this->_errors['__all__'] = array("Please submit at least two kinds of work (got {$section_cnt})");
         }
-*/
+
         return $this->cleaned_data;
     }
 
@@ -207,6 +223,7 @@ class SocialEntryForm extends Form {
             foreach ($fields_required as $postfix) {
                 $fld = "{$prefix}{$postfix}";
                 $val = array_key_exists($fld,$this->cleaned_data) ? $this->cleaned_data[$fld] : "";
+                error_log("CHK $fld: $val");
                 if($val == "" || is_null($val)) {
                     $this->_errors[$fld] = array("This field is required");
                     unset($this->cleaned_data[$fld]);

@@ -91,6 +91,42 @@ function fancyUpload(targ) {
         return '' + (n/1000000).toPrecision(2) + 'MB';
     }
 
+    // TODO: add/remove fld-error classes
+    function setError(errMsg) {
+        errorUI.style.display = '';
+        errorUI.textContent = errMsg;
+    }
+
+    function clearError(errMsg) {
+        errorUI.style.display = 'none';
+        errorUI.textContent = '';
+    }
+
+    // wire up remove button
+    remove.addEventListener('click', function(e) {
+        // remove a file that's been uploaded
+        e.preventDefault();
+        targ.style.display = '';
+        targ.disabled = false;
+        progressUI.style.display = 'none';
+        clearError();
+        attachedUI.style.display = 'none';
+    });
+
+
+    if( targ.getAttribute('data-uploaded')) {
+        // show uploaded file,  with remove button
+        targ.style.display = 'none';
+        clearError();
+        progressUI.style.display = 'none';
+        attachedUI.style.display = '';
+        details.textContent = targ.getAttribute('data-uploaded');
+        // remove it from form submission
+        targ.required = false;
+        targ.autocomplete = 'off';  // to stop FF persisting disabled state across loads
+        targ.disabled = true;
+    }
+
 
     // when user picks a file...
     targ.addEventListener('change', function (evt) {
@@ -106,17 +142,6 @@ function fancyUpload(targ) {
             xhr.abort();
         }
 
-
-        // TODO: add/remove fld-error classes
-        function setError(errMsg) {
-            errorUI.style.display = '';
-            errorUI.textContent = errMsg;
-        }
-
-        function clearError(errMsg) {
-            errorUI.style.display = 'none';
-            errorUI.textContent = '';
-        }
 
 
         // set up the upload
@@ -145,7 +170,7 @@ function fancyUpload(targ) {
             progressUI.style.display = 'none';
             attachedUI.style.display = '';
             details.textContent = '' + file.name + ' (' + prettySize(file.size) + ')';
-            // remove it form submission
+            // remove it from form submission
             targ.required = false;
             targ.autocomplete = 'off';  // to stop FF persisting disabled state across loads
             targ.disabled = true;
@@ -183,15 +208,6 @@ function fancyUpload(targ) {
         progress.setAttribute('value',0);
         //progressMsg.textContent = "Uploading " + file.name;
         cancel.addEventListener('click', cancelClicked);
-        remove.addEventListener('click', function(e) {
-            // remove a file that's been uploaded
-            e.preventDefault();
-            targ.style.display = '';
-            targ.disabled = false;
-            progressUI.style.display = 'none';
-            clearError();
-            attachedUI.style.display = 'none';
-        });
 
         // go!
         xhr.send(fd);

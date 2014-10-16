@@ -161,7 +161,12 @@ class BaseEntryHandler {
     }
 
     function cook_file(&$data, $filefield, $namebase) {
-        if(array_key_exists($filefield,$data) && $data[$filefield]) {
+        if(!array_key_exists($filefield,$data)) {
+            return;
+        }
+        if( is_array($data[$filefield])) {
+            // it's an entry in $_FILES
+
             // use namebase as the basis for filename
             $ext = pathinfo($data[$filefield]['name'], PATHINFO_EXTENSION);
             $cooked_file = strtolower(preg_replace("/[^-_0-9a-zA-Z\.]/","", $namebase));
@@ -183,37 +188,32 @@ class BaseEntryHandler {
             }
 
             $data[$filefield] = $cooked_file;
-        } else {
-
-            //error_log("missing $filefield");
-
-            // maybe file was uploaded previously?
-            $tok = $data['async_upload_token'];
-            $uploaded_name = $this->find_uploaded_file($tok,$filefield);
-            if ($uploaded_name !== NULL ) {
-                //error_log("found it! ({$uploaded_name})");
-                $ext = pathinfo($uploaded_name, PATHINFO_EXTENSION);
-                $cooked_file = strtolower(preg_replace("/[^-_0-9a-zA-Z\.]/","", $namebase));
-                if(!$cooked_file) {
-                    throw new Exception("Internal error - couldn't save {$filefield} because of bad name ({$cooked_file})");
-                }
-
-                $foo = $cooked_file.".".$ext;
-                // rename to avoid overwriting
-                $n = 1;
-                while(file_exists("{$this->entry_dir}/{$foo}") ) {
-                    $foo = "{$cooked_file}-{$n}.{$ext}";
-                    $n++;
-                }
-                $cooked_file = $foo;
-
-                // move
-                if( !rename($uploaded_name, "{$this->entry_dir}/{$cooked_file}") ) {
-                    throw new Exception("Internal error - couldn't rename {$uploaded_name} to {$filefield} {$this->entry_dir}/{$cooked_file}");
-                }
-
-                $data[$filefield] = $cooked_file;
+        } elseif (is_string($data[$filefield])) {
+            // it's the name of a previously-uploaded file
+            $uploaded_name = $data[$filefield];
+            //error_log("found it! ({$uploaded_name})");
+            $ext = pathinfo($uploaded_name, PATHINFO_EXTENSION);
+            $cooked_file = strtolower(preg_replace("/[^-_0-9a-zA-Z\.]/","", $namebase));
+            if(!$cooked_file) {
+                throw new Exception("Internal error - couldn't save {$filefield} because of bad name ({$cooked_file})");
             }
+
+            $foo = $cooked_file.".".$ext;
+            // rename to avoid overwriting
+            $n = 1;
+            while(file_exists("{$this->entry_dir}/{$foo}") ) {
+                $foo = "{$cooked_file}-{$n}.{$ext}";
+                $n++;
+            }
+            $cooked_file = $foo;
+
+            // move
+            if( !rename($uploaded_name, "{$this->entry_dir}/{$cooked_file}") ) {
+                throw new Exception("Internal error - couldn't rename {$uploaded_name} to {$filefield} {$this->entry_dir}/{$cooked_file}");
+            }
+
+            error_log("Installed $cooked_file");
+            $data[$filefield] = $cooked_file;
         }
     }
 
