@@ -185,13 +185,13 @@ class BaseEntryHandler {
             $data[$filefield] = $cooked_file;
         } else {
 
-            error_log("missing $filefield");
+            //error_log("missing $filefield");
 
             // maybe file was uploaded previously?
             $tok = $data['async_upload_token'];
             $uploaded_name = $this->find_uploaded_file($tok,$filefield);
             if ($uploaded_name !== NULL ) {
-                error_log("found it! ({$uploaded_name})");
+                //error_log("found it! ({$uploaded_name})");
                 $ext = pathinfo($uploaded_name, PATHINFO_EXTENSION);
                 $cooked_file = strtolower(preg_replace("/[^-_0-9a-zA-Z\.]/","", $namebase));
                 if(!$cooked_file) {
@@ -228,7 +228,7 @@ class BaseEntryHandler {
         // get field list from form, as data might be missing some values...
         $fieldnames = array_diff(array_keys($f->fields), $this->suppressed_fields);
 
-        error_log(join(",",$fieldnames));
+        //error_log(join(",",$fieldnames));
 
 
         // add a new entry to the csv file

@@ -103,6 +103,7 @@ class SocialEntryForm extends Form {
 
         foreach( $filefields as $fld) {
             if ($this->handler->find_uploaded_file($tok,$fld) !== NULL ) {
+                error_log("found uploaded file for $fld");
                 unset( $this->_errors[$fld] );
             }
         }
@@ -136,9 +137,8 @@ class SocialEntryForm extends Form {
         $cnt = 0;
         $fields = array('title','publication','pubdate','url','copy');
         $fields_req = array('title','publication','pubdate','copy');
-        $prefix = 'writing';
         for( $n=1; $n<=3; ++$n) {
-            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+            if($this->chk_block("writing_{$n}_",$fields,$fields_req)) {
                 $cnt++;
             }
         }
@@ -149,9 +149,8 @@ class SocialEntryForm extends Form {
         $cnt = 0;
         $fields = array('title','provider','pubdate','url','password');
         $fields_req = array('title','pubdate','url');
-        $prefix = 'video';
         for( $n=1; $n<=3; ++$n) {
-            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+            if($this->chk_block("video_{$n}_",$fields,$fields_req)) {
                 $cnt++;
             }
         }
@@ -162,9 +161,8 @@ class SocialEntryForm extends Form {
         $cnt = 0;
         $fields = array('title','provider','pubdate','url','password');
         $fields_req = array('title','pubdate','url');
-        $prefix = 'audio';
         for( $n=1; $n<=3; ++$n) {
-            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+            if($this->chk_block("audio_{$n}_",$fields,$fields_req)) {
                 $cnt++;
             }
         }
@@ -175,30 +173,40 @@ class SocialEntryForm extends Form {
         $cnt = 0;
         $fields = array('title','date','publication','url','photo');
         $fields_req = array('title','date','publication','photo');
-        $prefix = 'photo';
         for( $n=1; $n<=3; ++$n) {
-            if($this->chk_block($prefix,$fields,$fields_req,$n)) {
+            if($this->chk_block("photo_{$n}_",$fields,$fields_req)) {
                 $cnt++;
             }
         }
         return ($cnt>0) ? 1:0;
     }
 
-    function chk_block($prefix, $fields,$fields_required,$n) {
+    function chk_social() {
+        $fields = array('username','url','copy');
+        $fields_req = array('username','url');
+
+        $cnt=0;
+        if($this->chk_block("social_",$fields,$fields_req)) {
+            $cnt++;
+        }
+        return $cnt;
+    }
+
+    function chk_block($prefix, $fields,$fields_required) {
 
         $ok = TRUE;
         $used = FALSE;
         foreach ($fields as $postfix) {
-            $fld = "{$prefix}_{$n}_{$postfix}";
-            $val = $this->cleaned_data[$fld];
+            $fld = "{$prefix}{$postfix}";
+            $val = array_key_exists($fld,$this->cleaned_data) ? $this->cleaned_data[$fld] : "";
             if($val != "" && !is_null($val)) {
                 $used = TRUE;
             }
         }
         if($used) {
             foreach ($fields_required as $postfix) {
-                $fld = "{$prefix}_{$n}_{$postfix}";
-                $val = $this->cleaned_data[$fld];
+                $fld = "{$prefix}{$postfix}";
+                $val = array_key_exists($fld,$this->cleaned_data) ? $this->cleaned_data[$fld] : "";
                 if($val == "" || is_null($val)) {
                     $this->_errors[$fld] = array("This field is required");
                     unset($this->cleaned_data[$fld]);
@@ -209,33 +217,6 @@ class SocialEntryForm extends Form {
         return ($used && $ok); 
     }
 
-    function chk_social() {
-        $fields = array('username','url','copy');
-        $fields_req = array('username','url');
-
-        $used = FALSE;
-        $ok = TRUE;
-        foreach ($fields as $postfix) {
-            $fld = "social_{$postfix}";
-            $val = $this->cleaned_data[$fld];
-            if($val != "" && !is_null($val)) {
-                $used = TRUE;
-            }
-        }
-        if($used) {
-            foreach ($fields as $postfix) {
-                $fld = "social_{$postfix}";
-                $val = $this->cleaned_data[$fld];
-                if($val == "" || is_null($val)) {
-                    $this->_errors[$fld] = array("This field is required");
-                    unset($this->cleaned_data[$fld]);
-                    $ok = FALSE;
-                }
-            }
-        }
-
-        return ($used && $ok)?1:0;
-    }
 }
 
 

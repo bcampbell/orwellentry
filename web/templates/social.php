@@ -37,7 +37,7 @@
 
 <form enctype="multipart/form-data" method="POST">
 <?php if($f->errors) { ?>
-<?php if($f->errors['__all__']) { ?>
+<?php if(array_key_exists('__all__', $f->errors)) { ?>
 <div class="form-error"><?= $f->errors['__all__'][0] ?></div>
 <?php } else {?>
 <div class="form-error">Please correct the fields marked in red, then try submitting the form again</div>
