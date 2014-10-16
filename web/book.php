@@ -93,7 +93,7 @@ class BookEntryHandler extends BaseEntryHandler {
     // send out an email alert with the csv file and uploaded files
         $attachments = array($this->entries_file);
         if($data['book_cover']) {
-            $attachments[] = "{$this->upload_dir}/{$data['book_cover']}";
+            $attachments[] = "{$this->entry_dir}/{$data['book_cover']}";
         };
 
         $subject = "Orwell {$this->shortname} entry: '${data['book_title']}'";

@@ -57,20 +57,27 @@ function fld_label_right($f, $extra_css="") {
 class BaseEntryHandler {
     function __construct($shortname, $formtype) {
         global $g_config;
+        global $g_output_dir;
         $this->shortname = $shortname;
         $this->config = $g_config[$this->shortname];
-        $this->upload_dir = $this->config['upload_dir'];
-        $this->entries_file = "{$this->upload_dir}/{$this->shortname}_entries.csv";
+        $this->tmp_dir = "{$g_output_dir}/tmp/{$shortname}";
+        $this->entry_dir = "{$g_output_dir}/entries/{$shortname}";
+        $this->entries_file = "{$this->entry_dir}/{$shortname}_entries.csv";
 
         $this->formtype = $formtype;
-
         $this->sanity_check();
+        // fields to remove from output csv
+        $this->suppressed_fields = array("async_upload_token");
     }
 
     function handle()
     {
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $f= new $this->formtype($_POST,$_FILES);
+            if(array_key_exists('async_upload_field', $_POST) ) {
+                $this->handle_async_upload();
+                return;
+            }
+            $f= new $this->formtype($_POST, $_FILES, $this);
             if($f->is_valid()) {
                 $this->process($f);
                 // redirect to prevent doubleposting
@@ -80,10 +87,52 @@ class BaseEntryHandler {
             }
         } else {
             // provide an unbound form
-            $f = new $this->formtype(null,null);
+            $f = new $this->formtype(null,null,$this);
         }
 
         $this->render_page($f);
+    }
+
+
+
+    function find_uploaded_file($tok,$field_name) {
+        $got = glob("{$this->tmp_dir}/{$tok}_{$field_name}.*");
+        if(count($got)==0) {
+            return NULL;
+        }
+        return $got[0];
+    }
+
+    function async_filename($tok,$field_name)
+    {
+        return "{$this->tmp_dir}/{$tok}_{$field_name}";
+    }
+
+    function handle_async_upload()
+    {
+        $field_name = $_POST['async_upload_field'];
+        $file = $_FILES['async_upload_file'];
+        $tok = $_POST['async_upload_token'];
+
+        // TODO: apply file validation rules here?
+
+
+        // already got a file?
+        $old = $this->find_uploaded_file($tok,$field_name);
+        if($old!==NULL) {
+            // delete old file
+            if(!unlink($old)) {
+                error_log("Couldn't delete {$old}");
+            }
+        }
+
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $name = "{$this->tmp_dir}/{$tok}_{$field_name}.{$ext}";
+
+        // stash file for later...
+        if(move_uploaded_file($file['tmp_name'], $name) !== TRUE) {
+            throw new Exception("Internal error - couldn't save {$field_name}");
+        }
     }
 
 
@@ -93,16 +142,26 @@ class BaseEntryHandler {
     }
 
     function sanity_check() {
-        if(!file_exists($this->upload_dir)) {
-            throw new Exception("Internal error - Output dir doesn't exist ({$this->upload_dir})");
+        if(!file_exists($this->entry_dir)) {
+            if (!mkdir($this->entry_dir, 0777, true)) {
+                throw new Exception("Internal error - couldn't create entry dir ({$this->entry_dir})");
+            }
         }
-        if(!is_writable($this->upload_dir)) {
-            throw new Exception("Internal error - Output dir isn't writable ({$this->upload_dir})");
+        if(!is_writable($this->entry_dir)) {
+            throw new Exception("Internal error - Entry dir isn't writable ({$this->entry_dir})");
+        }
+        if(!file_exists($this->tmp_dir)) {
+            if (!mkdir($this->tmp_dir, 0777, true)) {
+                throw new Exception("Internal error - couldn't create tmp dir ({$this->tmp_dir})");
+            }
+        }
+        if(!is_writable($this->tmp_dir)) {
+            throw new Exception("Internal error - Tmp dir isn't writable ({$this->tmp_dir})");
         }
     }
 
     function cook_file(&$data, $filefield, $namebase) {
-        if($data[$filefield]) {
+        if(array_key_exists($filefield,$data) && $data[$filefield]) {
             // use namebase as the basis for filename
             $ext = pathinfo($data[$filefield]['name'], PATHINFO_EXTENSION);
             $cooked_file = strtolower(preg_replace("/[^-_0-9a-zA-Z\.]/","", $namebase));
@@ -113,17 +172,48 @@ class BaseEntryHandler {
             $foo = $cooked_file.".".$ext;
             // rename to avoid overwriting
             $n = 1;
-            while(file_exists("{$this->upload_dir}/{$foo}") ) {
+            while(file_exists("{$this->entry_dir}/{$foo}") ) {
                 $foo = "{$cooked_file}-{$n}.{$ext}";
                 $n++;
             }
             $cooked_file = $foo;
 
-            if(move_uploaded_file($data[$filefield]['tmp_name'], "{$this->upload_dir}/{$cooked_file}") !== TRUE) {
-                throw new Exception("Internal error - couldn't save {$filefield} ({$this->upload_dir}/{$cooked_file})");
+            if(move_uploaded_file($data[$filefield]['tmp_name'], "{$this->entry_dir}/{$cooked_file}") !== TRUE) {
+                throw new Exception("Internal error - couldn't save {$filefield} ({$this->entry_dir}/{$cooked_file})");
             }
 
             $data[$filefield] = $cooked_file;
+        } else {
+
+            error_log("missing $filefield");
+
+            // maybe file was uploaded previously?
+            $tok = $data['async_upload_token'];
+            $uploaded_name = $this->find_uploaded_file($tok,$filefield);
+            if ($uploaded_name !== NULL ) {
+                error_log("found it! ({$uploaded_name})");
+                $ext = pathinfo($uploaded_name, PATHINFO_EXTENSION);
+                $cooked_file = strtolower(preg_replace("/[^-_0-9a-zA-Z\.]/","", $namebase));
+                if(!$cooked_file) {
+                    throw new Exception("Internal error - couldn't save {$filefield} because of bad name ({$cooked_file})");
+                }
+
+                $foo = $cooked_file.".".$ext;
+                // rename to avoid overwriting
+                $n = 1;
+                while(file_exists("{$this->entry_dir}/{$foo}") ) {
+                    $foo = "{$cooked_file}-{$n}.{$ext}";
+                    $n++;
+                }
+                $cooked_file = $foo;
+
+                // move
+                if( !rename($uploaded_name, "{$this->entry_dir}/{$cooked_file}") ) {
+                    throw new Exception("Internal error - couldn't rename {$uploaded_name} to {$filefield} {$this->entry_dir}/{$cooked_file}");
+                }
+
+                $data[$filefield] = $cooked_file;
+            }
         }
     }
 
@@ -133,23 +223,34 @@ class BaseEntryHandler {
         $this->sanity_check();
 
         $data = $f->cleaned_data;
-
         $this->cook_data($data);
+
+        // get field list from form, as data might be missing some values...
+        $fieldnames = array_diff(array_keys($f->fields), $this->suppressed_fields);
+
+        error_log(join(",",$fieldnames));
+
 
         // add a new entry to the csv file
 
         // if starting new file, output field names in first row
         if(!file_exists($this->entries_file)) {
-            $fieldnames = array_keys($data);
             if(file_put_contents($this->entries_file, join(',',$fieldnames) . "\n") === FALSE) {
                 throw new Exception("Internal error - couldn't create entry list ({$this->entries_file})");
             }
         }
 
         // format a line of data
+        // (do this to ensure order is consistant)
+        $datline = array();
+        foreach( $fieldnames as $fld) {
+            $datline[] = $data[$fld];
+        }
+
+
         $obuf = fopen('php://output', 'w');
         ob_start();
-        fputcsv($obuf, $data);
+        fputcsv($obuf, $datline);
         fclose($obuf);
         $line = ob_get_clean();
 

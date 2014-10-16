@@ -103,11 +103,11 @@ class JournalismEntryHandler extends BaseEntryHandler {
         // send out an email alert with the csv file and uploaded files
         $attachments = array($this->entries_file);
         if($data['journo_photo']) {
-            $attachments[] = "{$this->upload_dir}/{$data['journo_photo']}";
+            $attachments[] = "{$this->entry_dir}/{$data['journo_photo']}";
         };
         for($n=1; $n<=6; ++$n) {
             if($data["item_{$n}_copy"]) {
-                $attachments[] = "{$this->upload_dir}/{$data["item_{$n}_copy"]}";
+                $attachments[] = "{$this->entry_dir}/{$data["item_{$n}_copy"]}";
             }
         }
 

@@ -7,17 +7,23 @@ require_once "drongo-forms/forms.php";
 
 
 class SocialEntryForm extends Form {
-    function __construct($data=null,$files=null) {
+    function __construct($data=null,$files=null,$handler=null) {
+        $this->handler = $handler;
         $opts = array(
             'label_suffix'=>'', // suppress a trailing ':' after labels
             /* 'prefix'=>'test', */
         );
+
+
 
         parent::__construct($data,$files,$opts);
         // these should be opts?
         $this->error_css_class = 'fld-error';
         $this->required_css_class = 'fld-required';
 
+        // id to let us tie form submission to previously-uploaded files
+        $async_upload_token = bin2hex(openssl_random_pseudo_bytes(6));
+        $this['async_upload_token'] = new CharField( array('required'=>TRUE, 'initial'=>$async_upload_token, 'widget'=>'HiddenInput' ) ); 
 
         $this['title'] = new CharField( array( 'required'=>TRUE, 'label'=>"Title of submission"));
 
@@ -80,11 +86,37 @@ class SocialEntryForm extends Form {
     }
 
 
+
     //
     function clean() {
-        // check sections are complete or empty
+        // remove validation errors on any files that were previously uploaded
+        $tok = $this->cleaned_data['async_upload_token'];
 
-        // make sure at least two sections filled in
+        $filefields = array('journo_photo',
+            'writing_1_copy',
+            'writing_2_copy',
+            'writing_3_copy',
+            'social_copy',
+            'photo_1_photo',
+            'photo_2_photo',
+            'photo_3_photo');
+
+        foreach( $filefields as $fld) {
+            if ($this->handler->find_uploaded_file($tok,$fld) !== NULL ) {
+                unset( $this->_errors[$fld] );
+            }
+        }
+        // check sections are complete or empty
+        // and make sure at least two sections filled in
+
+        error_log("clean():");
+        error_log(sprintf("wrt: %d",$this->chk_writing()));
+        error_log(sprintf("vid: %d",$this->chk_video()));
+        error_log(sprintf("aud: %d",$this->chk_audio()));
+        error_log(sprintf("soc: %d",$this->chk_social()));
+        error_log(sprintf("pho: %d",$this->chk_photo()));
+
+
         $section_cnt = $this->chk_writing() +
             $this->chk_video() +
             $this->chk_audio() +
@@ -92,10 +124,10 @@ class SocialEntryForm extends Form {
             $this->chk_photo();
 
 
-        if($section_cnt < 2 ) {
-            $this->_errors['__all__'] = array("Please submit at least two kinds of work");
+/*        if($section_cnt < 2 ) {
+            $this->_errors['__all__'] = array("Please submit at least two kinds of work (got {$section_cnt})");
         }
-
+*/
         return $this->cleaned_data;
     }
 
@@ -233,11 +265,11 @@ class SocialEntryHandler extends BaseEntryHandler {
 
         /*
         if($data['journo_photo']) {
-            $attachments[] = "{$this->upload_dir}/{$data['journo_photo']}";
+            $attachments[] = "{$this->entry_dir}/{$data['journo_photo']}";
         };
         for($n=1; $n<=6; ++$n) {
             if($data["item_{$n}_copy"]) {
-                $attachments[] = "{$this->upload_dir}/{$data["item_{$n}_copy"]}";
+                $attachments[] = "{$this->entry_dir}/{$data["item_{$n}_copy"]}";
             }
         }
         */

@@ -44,6 +44,7 @@
 <?php } ?>
 <?php } ?>
 
+<?= $f['async_upload_token'] ?>
 <fieldset>
     <legend>Entrant details</legend>
 <div class="fieldset-notes"><span>*</span> Required fields</div>
@@ -176,6 +177,12 @@ for($n=1; $n<=3; ++$n) {
     hideShow('.social-media',0, "Add a social media submission");
     hideShow('.submission-grp-audio',0, "Add an audio submission");
     hideShow('.submission-grp-photo',0, "Add a photo submission");
+
+
+    inputs = ( document.querySelectorAll('input[type="file"]'));
+    for (var i=0; i<inputs.length; i++ ) {
+        fancyUpload(inputs[i]);
+    }
 </script>
 
 <?php endblock() ?>

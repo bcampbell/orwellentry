@@ -104,5 +104,10 @@ var f=function(){
 select.onchange=f;
 f();
 
+
+
+//document.getElementById("journo_photo").addEventListener('change', handleFileSelect, false);
+
+
 </script>
 <?php endblock() ?>
