@@ -212,7 +212,7 @@ class BaseEntryHandler {
                 throw new Exception("Internal error - couldn't rename {$uploaded_name} to {$filefield} {$this->entry_dir}/{$cooked_file}");
             }
 
-            error_log("Installed $cooked_file");
+            //error_log("Installed $cooked_file");
             $data[$filefield] = $cooked_file;
         }
     }

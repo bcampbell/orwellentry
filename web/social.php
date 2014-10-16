@@ -28,6 +28,16 @@ class SocialEntryForm extends Form {
         $this->error_css_class = 'fld-error';
         $this->required_css_class = 'fld-required';
 
+        $relationship_choices = array(
+            ''=>"-- please select --",
+            'resident'=>"Residency in UK or Ireland",
+            'citizen'=>"Citizen of UK or Ireland",
+            'first_publication'=>"First publication of entry",
+            'foreign_correspondent'=>"Foreign correspondent for British or Irish publication",
+            'resident_at_time_of_writing'=>"Resident in the UK or Ireland at the time of writing or publication",
+            'other'=>"Other (please specify)");
+
+
         // id to let us tie form submission to previously-uploaded files
         $async_upload_token = bin2hex(openssl_random_pseudo_bytes(6));
         $this['async_upload_token'] = new CharField( array('required'=>TRUE, 'initial'=>$async_upload_token, 'widget'=>'HiddenInput' ) ); 
@@ -40,6 +50,13 @@ class SocialEntryForm extends Form {
         $this['journo_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email" ));
         $this['journo_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['journo_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Telephone number"));
+
+        $this['link_with_uk_or_ireland'] = new ChoiceField(array(
+            'label'=>'Relationship of entry to UK or Ireland',
+            'choices'=>$relationship_choices,
+            'help_text'=>'See point 9 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
+        $this['link_other'] = new CharField(array('required'=>FALSE,'label'=>""));
+
 
         $this["journo_photo"] = new FileField(array(
             'required'=>TRUE,
@@ -109,6 +126,17 @@ class SocialEntryForm extends Form {
 
     //
     function clean() {
+
+        // make sure that link is filled in if dropdown is set to "other"
+        $link = $this->cleaned_data['link_with_uk_or_ireland'];
+        $link_other = $this->cleaned_data['link_other'];
+        if($link=='other' && !$link_other) {
+            $this->_errors["link_with_uk_or_ireland"] = array("Please specify the link to the UK or Ireland");
+            unset($this->cleaned_data['link_with_uk_or_ireland']);
+            unset($this->cleaned_data['link_other']);
+        }
+
+
         // remove validation errors on any files that were previously uploaded
         $tok = $this->cleaned_data['async_upload_token'];
 
@@ -126,23 +154,14 @@ class SocialEntryForm extends Form {
         // check sections are complete or empty
         // and make sure at least two sections filled in
 
-        error_log("clean():");
-        error_log(sprintf("wrt: %d",$this->chk_writing()));
-        error_log(sprintf("vid: %d",$this->chk_video()));
-        error_log(sprintf("aud: %d",$this->chk_audio()));
-        error_log(sprintf("soc: %d",$this->chk_social()));
-        error_log(sprintf("pho: %d",$this->chk_photo()));
-
-
         $section_cnt = $this->chk_writing() +
             $this->chk_video() +
             $this->chk_audio() +
             $this->chk_social() +
             $this->chk_photo();
 
-
         if($section_cnt < 2 ) {
-            $this->_errors['__all__'] = array("Please submit at least two kinds of work (got {$section_cnt})");
+            $this->_errors['__all__'] = array("Please submit at least two different kinds of work (got {$section_cnt})");
         }
 
         return $this->cleaned_data;
@@ -188,7 +207,7 @@ class SocialEntryForm extends Form {
     function chk_photo() {
         $cnt = 0;
         $fields = array('title','date','publication','url','photo');
-        $fields_req = array('title','date','publication','photo');
+        $fields_req = array('title','date','photo');
         for( $n=1; $n<=3; ++$n) {
             if($this->chk_block("photo_{$n}_",$fields,$fields_req)) {
                 $cnt++;

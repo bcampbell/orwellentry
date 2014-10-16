@@ -91,23 +91,8 @@ for($n=1; $n<=6; ++$n) {
 </div>
 
 
+<script src="/helpers.js"></script>
 <script>
-var select = document.getElementById("link_with_uk_or_ireland");
-var other = document.getElementById("link_other");
-var f=function(){
-    if(select.value=="other"){
-       other.style.display="block";
-    } else {
-       other.style.display="none";
-    }
-}
-select.onchange=f;
-f();
-
-
-
-//document.getElementById("journo_photo").addEventListener('change', handleFileSelect, false);
-
-
+selOrOther("link_with_uk_or_ireland", "link_other", "other");
 </script>
 <?php endblock() ?>

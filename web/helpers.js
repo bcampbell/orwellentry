@@ -1,4 +1,19 @@
 
+function selOrOther(selid,otherid,selotherval) {
+    var select = document.getElementById(selid);
+    var other = document.getElementById(otherid);
+    var f=function(){
+        if(select.value==selotherval){
+        other.style.display="block";
+        } else {
+        other.style.display="none";
+        }
+    }
+    select.onchange=f;
+    f();
+}
+
+
 function hideShow(sel,initialShown,desc) {
     var targs = document.querySelectorAll(sel);
     if (targs.length<1) {

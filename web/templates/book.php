@@ -87,17 +87,9 @@ but not limited to, residency, citizenship or first publication).
 <p>If you have any queries, please <a href="mailto:theorwellprize@mediastandardstrust.org">email us</a> or call 0207 848 7930.</p>
 </div>
 
+<script src="/helpers.js"></script>
 <script>
-var select = document.getElementById("link_with_uk_or_ireland");
-var other = document.getElementById("link_other");
-var f=function(){
-    if(select.value=="other"){
-       other.style.display="block";
-    } else {
-       other.style.display="none";
-    }
-}
-select.onchange=f;
-f();
+selOrOther("link_with_uk_or_ireland", "link_other", "other");
 </script>
+
 <?php endblock() ?>

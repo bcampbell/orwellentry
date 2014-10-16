@@ -61,6 +61,7 @@ Please enter your details below. If entering as part of a small team of journali
 <?php fld($f['journo_phone']); ?>
 <?php fld($f['journo_photo']); ?>
 <?php fld($f['further_info']); ?>
+<?php fld_select_with_other($f['link_with_uk_or_ireland'],$f['link_other']); ?>
 </fieldset>
 
 <fieldset>
@@ -172,6 +173,8 @@ for($n=1; $n<=3; ++$n) {
 
 <script src="/helpers.js"></script>
 <script>
+    selOrOther("link_with_uk_or_ireland", "link_other", "other");
+
     hideShow('.submission-grp-writing',0,"Add a writing submission");
     hideShow('.submission-grp-video',0, "Add a video submission");
     hideShow('.social-media',0, "Add a social media submission");
