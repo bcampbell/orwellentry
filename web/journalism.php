@@ -45,7 +45,7 @@ class JournalismEntryForm extends Form {
         $this['journo_first_name'] = new CharField( array( 'required'=>TRUE, 'label'=>"First name"));
         $this['journo_last_name'] = new CharField( array( 'required'=>TRUE, 'label'=>"Last name"));
         $this['journo_address'] = new CharField(array('required'=>TRUE, 'label'=>"Correspondence address", 'widget'=>'TextArea' ));
-        $this['journo_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email" ));
+        $this['journo_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email", 'widget'=>newemailwidget() ));
         $this['journo_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['journo_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Telephone number"));
         $this['link_with_uk_or_ireland'] = new ChoiceField(array(
@@ -64,18 +64,29 @@ class JournalismEntryForm extends Form {
             $req = ($n<=4)?TRUE:FALSE;
             $this["item_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["item_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication'));
-            $this["item_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy'));
+            $this["item_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
             $this["item_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["item_{$n}_copy"] = new FileField(array('required'=>$req,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }
 
         $this['publication_contact'] = new CharField(array('required'=>TRUE, 'label'=>'Contact name'));
-        $this['publication_email'] = new EmailField(array('required'=>TRUE, 'label'=>'Email address'));
+        $this['publication_email'] = new EmailField(array('required'=>TRUE, 'label'=>'Email address', 'widget'=>newemailwidget()));
         $this['publication_phone'] = new CharField(array('required'=>TRUE, 'label'=>'Telephone number'));
         $this['publication_address'] = new CharField(array('required'=>TRUE, 'widget'=>'TextArea', 'label'=>'Address' ));
 
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
+        if(array_key_exists('async_upload_token', $_POST)) {
+            // check for already-uploaded files on the file fields:
+            $tok = $_POST['async_upload_token'];
+
+            foreach($this->filefields as $fld) {
+                if ($this->handler->find_uploaded_file($tok,$fld) !== NULL ) {
+                    // got one! set an attr on the field so the javascript knows...
+                    $this->fields[$fld]->widget->attrs['data-uploaded'] = "File already uploaded...";
+                }
+            } 
+        }
     }
 
 
@@ -128,7 +139,7 @@ class JournalismEntryHandler extends BaseEntryHandler {
 
     function do_alert($data) {
         // send out an email alert with the csv file and uploaded files
-        $attachments = array($this->entries_file);
+        $attachments = array();
         if($data['journo_photo']) {
             $attachments[] = "{$this->entry_dir}/{$data['journo_photo']}";
         };

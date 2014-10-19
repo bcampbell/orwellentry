@@ -1,5 +1,6 @@
 <?php
-$g_root="/home/ben/proj/orwellentry";
+$g_root="BLAHBLAHBLAH/orwellentry";
+$g_output_dir = 'BLAHBLAHLBAH/var/orwell';
 
 // add our include dir to the path
 set_include_path(get_include_path() . PATH_SEPARATOR . "{$g_root}/inc");
@@ -7,19 +8,21 @@ set_include_path(get_include_path() . PATH_SEPARATOR . "{$g_root}/inc");
 // config for email alerts
 $alert_config = array(
     'from'=>'theorwellprize@mediastandardstrust.org',
-    'recipients'=>array('nobody@example.com'),
+    'recipients'=>array('bob@example.com'),
 );
 
 // config for each form
 $g_config = array(
     'book'=>array(
-        'upload_dir' => '/tmp/entries/book',
         'alert' => $alert_config,
     ),
     'journalism'=>array(
-        'upload_dir' => '/tmp/entries/journalism',
+        'alert' => $alert_config,
+    ),
+    'social'=>array(
         'alert' => $alert_config,
     ),
 );
 
 ?>
+

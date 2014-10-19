@@ -53,6 +53,16 @@ function fld_label_right($f, $extra_css="") {
 <?php
 }
 
+function newdatewidget()
+{
+    return new TextInput(array('pattern'=>'[0-9]{1,2}[./-][0-9]{1,2}[./-][0-9]{4}'));
+}
+function newemailwidget()
+{
+    // client-side pattern to just ensure there's at least a '@' sign somewhere...
+    return new TextInput(array('pattern'=>'[^@]+@[^@]+'));
+}
+
 
 class BaseEntryHandler {
     function __construct($shortname, $formtype) {
@@ -277,9 +287,9 @@ class BaseEntryHandler {
 
         // to run local smtp server for testing email sending:
         // $ sudo python -m smtpd -n -c DebuggingServer localhost:25
-        //$mail->isSMTP();
-        //$mail->Host       = "localhost"; // SMTP server
-        //$mail->Port       = 25;
+        $mail->isSMTP();
+        $mail->Host       = "localhost"; // SMTP server
+        $mail->Port       = 25;
 
         $mail->Subject = $subject;
         $mail->setFrom($from);
@@ -287,17 +297,33 @@ class BaseEntryHandler {
             $mail->addAddress($to);
         }
 
+
+
 //        $mail->WordWrap = 50;                                 // Set word wrap to 50 characters
-        foreach( $filenames as $file) {
-            $mail->addAttachment($file);
-        }
+        $mail->addAttachment($this->entries_file);
 
         $msg = "Here is the submitted data:\n\n";
         foreach($entry_data as $key=>$value) {
             $value = preg_replace('/[\n]/',"\n                          ", $value);
             $msg .= sprintf("%24s: %s\n",$key,$value);
         }
+        $msg .= "\n" . count($filenames) . " files:\n";
+        $max_att_total = 2000000;
+        $att_total = 0;
+        foreach( $filenames as $file) {
+            $s = filesize($file);
+            $att_total = $att_total + $s;
+            $msg .= basename($file) . " ({$s} bytes)\n";
+        }
+        if($att_total>$max_att_total) {
 
+            $msg .= "\n*** FILES TOO BIG - NOT ATTACHED ***\n";
+            $filenames = array();
+        }
+
+        foreach( $filenames as $file) {
+            $mail->addAttachment($file);
+        }
         $mail->Body = $msg;
 
         if(!$mail->send()) {

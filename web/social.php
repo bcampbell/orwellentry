@@ -6,6 +6,7 @@ require_once "common.php";
 require_once "drongo-forms/forms.php";
 
 
+
 class SocialEntryForm extends Form {
     function __construct($data=null,$files=null,$handler=null) {
         $this->handler = $handler;
@@ -47,7 +48,7 @@ class SocialEntryForm extends Form {
         $this['journo_first_name'] = new CharField( array( 'required'=>TRUE, 'label'=>"First name"));
         $this['journo_last_name'] = new CharField( array( 'required'=>TRUE, 'label'=>"Last name"));
         $this['journo_address'] = new CharField(array('required'=>TRUE, 'label'=>"Correspondence address", 'widget'=>'TextArea' ));
-        $this['journo_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email" ));
+        $this['journo_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email", 'widget'=>newemailwidget() ));
         $this['journo_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['journo_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Telephone number"));
 
@@ -69,7 +70,7 @@ class SocialEntryForm extends Form {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["writing_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["writing_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication'));
-            $this["writing_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy'));
+            $this["writing_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
             $this["writing_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["writing_{$n}_copy"] = new FileField(array('required'=>$req,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }
@@ -78,7 +79,7 @@ class SocialEntryForm extends Form {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["video_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["video_{$n}_provider"] = new CharField(array('required'=>$req,'label'=>'Channel/Content provider'));
-            $this["video_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy'));
+            $this["video_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
             $this["video_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["video_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', 'help_text'=>"Please don't use an important password! It's just to prevent casual viewing by others."));
         }
@@ -87,7 +88,7 @@ class SocialEntryForm extends Form {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["audio_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["audio_{$n}_provider"] = new CharField(array('required'=>$req,'label'=>'Channel/Content provider'));
-            $this["audio_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first broadcast/release', 'help_text'=>'dd/mm/yyyy'));
+            $this["audio_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first broadcast/release', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
             $this["audio_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["audio_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', 'help_text'=>"Please don't use an important password! It's just to prevent casual viewing by others."));
         }
@@ -99,7 +100,7 @@ class SocialEntryForm extends Form {
         for( $n=1; $n<=3; ++$n) {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["photo_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
-            $this["photo_{$n}_date"] = new CharField(array('required'=>$req,'label'=>'Date taken', 'help_text'=>'dd/mm/yyyy'));
+            $this["photo_{$n}_date"] = new CharField(array('required'=>$req,'label'=>'Date taken', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
             $this["photo_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication (if applicable)'));
             $this["photo_{$n}_url"] = new CharField(array('required'=>$req,'label'=>'URL'));
             $this["photo_{$n}_photo"] = new FileField(array('required'=>$req,'label'=>'Upload photo', 'help_text'=>"JPEG only please, max size 3 Meg"));
@@ -278,18 +279,21 @@ class SocialEntryHandler extends BaseEntryHandler {
 
     function do_alert($data) {
         // send out an email alert with the csv file and uploaded files
-        $attachments = array($this->entries_file);
+        $attachments = array();
 
-        /*
-        if($data['journo_photo']) {
-            $attachments[] = "{$this->entry_dir}/{$data['journo_photo']}";
-        };
-        for($n=1; $n<=6; ++$n) {
-            if($data["item_{$n}_copy"]) {
-                $attachments[] = "{$this->entry_dir}/{$data["item_{$n}_copy"]}";
+        $filefields = array('journo_photo',
+            'writing_1_copy',
+            'writing_2_copy',
+            'writing_3_copy',
+            'social_copy',
+            'photo_1_photo',
+            'photo_2_photo',
+            'photo_3_photo');
+        foreach($filefields as $fld) {
+            if($data[$fld]) {
+                $attachments[] = "{$this->entry_dir}/{$data[$fld]}";
             }
         }
-        */
 
         $subject = "Orwell {$this->shortname} entry: '{$data['journo_first_name']} {$data['journo_last_name']}'";
         $this->email($subject,$data,$attachments);

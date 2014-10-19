@@ -4,11 +4,11 @@
 
 <p>Please post five hard copies of your book to:<br/>
 <div class="address">
-The Orwell Prize<br/>
-Kings College London<br/>
-Strand Bridge House<br/>
-138-142 The Strand<br/>
-London WC2R 1HH<br/>
+    The Orwell Prize<br/>
+    King's College London<br/>
+    Virginia Woolf Building<br/>
+    22 Kingsway<br/>
+    London WC2B 6NR<br/>
 </div>
 </p>
 <p>You will be notified when the submission is complete.</p>

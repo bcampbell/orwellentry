@@ -1,7 +1,7 @@
 <?php require_once "common.php"; ?>
 <?php include 'base.php' ?>
 
-<?php startblock('title') ?>The Orwell Journalism Prize 2014: Entry form<?php endblock() ?>
+<?php startblock('title') ?>The Orwell Book Prize 2015: Entry form<?php endblock() ?>
 
 <?php startblock('head_extra') ?>
 <?php endblock() ?>
@@ -10,21 +10,21 @@
 <?php startblock('main') ?>
 
 <div class="content">
-<h1>Book Prize 2014: Entry form</h1>
+<h1>Book Prize 2015: Entry form</h1>
 <p>Five copies of each submitted book should be sent to:
 <div class="address">
-The Orwell Prize<br/>
-Kings College London<br/>
-Strand Bridge House<br/>
-138-142 The Strand<br/>
-London WC2R 1HH
+    The Orwell Prize<br/>
+    King's College London<br/>
+    Virginia Woolf Building<br/>
+    22 Kingsway<br/>
+    London WC2B 6NR<br/>
 </div>
 <p>
-The submission deadline is <em>Wednesday 15th January, 2014</em>.
+The submission deadline is <em>15th January, 2015</em>.
 </p>
 <p>
 Entry is FREE and there are no charges at any point. All books published for
-the first time between 1st January 2013 and 31st December 2013 are eligible.
+the first time between 1st January 2014 and 31st December 2014 are eligible.
 Entrants must have a clear relationship with the UK or Ireland (including,
 but not limited to, residency, citizenship or first publication).
 </p>

@@ -35,7 +35,7 @@ class BookEntryForm extends Form {
 
         $this['book_title'] = new CharField(
             array( 'required'=>TRUE, 'label'=>"Title"));
-        $this['publication_date'] = new CharField(array( 'required'=>TRUE, 'help_text'=>"dd/mm/yyyy" ));
+        $this['publication_date'] = new CharField(array( 'required'=>TRUE, 'help_text'=>"dd/mm/yyyy", 'widget'=>newdatewidget() ));
         $this['author_first_name'] = new CharField(array( 'required'=>TRUE ));
         $this['author_last_name'] = new CharField(array( 'required'=>TRUE ));
         $this['book_cover'] = new FileField(array(
@@ -47,18 +47,18 @@ class BookEntryForm extends Form {
             'choices'=>$relationship_choices,
             'help_text'=>'See point 9 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
         $this['link_other'] = new CharField(array('required'=>FALSE,'label'=>""));
-        $this['author_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email" ));
+        $this['author_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email", 'widget'=>newemailwidget() ));
         $this['author_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
         $this['author_address'] = new CharField(array('required'=>TRUE, 'label'=>"Address", 'widget'=>'TextArea' ));
         $this['author_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Phone"));
 
         $this['publisher_name'] = new CharField(array('required'=>TRUE, 'label'=>"Name"));
-        $this['publisher_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email"));
+        $this['publisher_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email", 'widget'=>newemailwidget()));
         $this['publisher_address'] = new CharField(array('required'=>TRUE, 'widget'=>'TextArea', 'label'=>"Address" ));
         $this['publisher_phone'] = new CharField(array('required'=>TRUE, 'label'=>"Telephone number"));
 
         $this['agent_name'] = new CharField(array('required'=>FALSE, 'label'=>"Name"));
-        $this['agent_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email"));
+        $this['agent_email'] = new EmailField(array('required'=>FALSE, 'label'=>"Email", 'widget'=>newemailwidget()));
         $this['agent_address'] = new CharField(array('required'=>FALSE, 'widget'=>'TextArea', 'label'=>"Address" ));
         $this['agent_phone'] = new CharField(array('required'=>FALSE, 'label'=>"Telephone number"));
 
@@ -67,6 +67,17 @@ class BookEntryForm extends Form {
             'choices'=>array('author'=>"Author", 'publisher'=>"Publisher", 'agent'=>"Agent") ));
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
 
+        if(array_key_exists('async_upload_token', $_POST)) {
+            // check for already-uploaded files on the file fields:
+            $tok = $_POST['async_upload_token'];
+
+            foreach($this->filefields as $fld) {
+                if ($this->handler->find_uploaded_file($tok,$fld) !== NULL ) {
+                    // got one! set an attr on the field so the javascript knows...
+                    $this->fields[$fld]->widget->attrs['data-uploaded'] = "File already uploaded...";
+                }
+            } 
+        }
     }
 
     function clean() {
@@ -112,7 +123,7 @@ class BookEntryHandler extends BaseEntryHandler {
 
     function do_alert($data) {
     // send out an email alert with the csv file and uploaded files
-        $attachments = array($this->entries_file);
+        $attachments = array();
         if($data['book_cover']) {
             $attachments[] = "{$this->entry_dir}/{$data['book_cover']}";
         };

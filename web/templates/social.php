@@ -10,7 +10,7 @@
 <?php startblock('main') ?>
 <div class="content">
     <h1>The Orwell Prize for Exposing Britain's Social Evils 2015: Entry form</h1>
-    <p>The submission deadline is <em>TBC</em></p>
+    <p>The submission deadline is <em>15 January 2015</em></p>
     <p>
     An entry for The Orwell Prize for Exposing Britain's Social Evils
     should consist of a story that has enhanced the public understanding

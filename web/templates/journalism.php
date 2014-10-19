@@ -1,7 +1,7 @@
 <?php require_once "common.php"; ?>
 <?php include 'base.php' ?>
 
-<?php startblock('title') ?>The Orwell Journalism Prize 2014: Entry form<?php endblock() ?>
+<?php startblock('title') ?>The Orwell Journalism Prize 2015: Entry form<?php endblock() ?>
 
 <?php startblock('head_extra') ?>
 <?php endblock() ?>
@@ -9,9 +9,9 @@
 
 <?php startblock('main') ?>
 <div class="content">
-<h1>Journalism Prize 2014: Entry form</h1>
+<h1>Journalism Prize 2015: Entry form</h1>
 <p>
-The submission deadline is <em>Wednesday 15th January, 2014</em>.
+The submission deadline is <em>15 January 2015</em>.
 </p>
 <p>
 Journalism Prize entries should consist of between four and six submissions,
@@ -22,7 +22,7 @@ submitted with every entry.
 </p>
 <p>
 Entry is FREE and there are no charges at any point. All work published for
-the first time between 1st January 2013 and 31st December 2013 is eligible.
+the first time between 1st January 2014 and 31st December 2014 is eligible.
 </p>
 <p>
 Entrants must have a clear relationship with the UK or Ireland (including,
