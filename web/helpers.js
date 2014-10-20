@@ -26,14 +26,21 @@ function hideShow(sel,initialShown,desc) {
         // hide any which are empty
         var el = targs[i];
         var inps = el.querySelectorAll("input");
-        var cnt = 0;
+        var used = false;
 
         for (var j =0;j<inps.length; j++) {
+            var inp = inps[j];
+            if (inp.parentNode.classList) {
+                if(inp.parentNode.classList.contains('fld-error')) {
+                    used = true;
+                }
+            }
+
             if(inps[j].value != "") {
-                cnt++;
+                used=true;
             }
         }
-        if( cnt == 0 ) {
+        if (!used) {
             el.style.display = 'none';
         }
     }
@@ -63,6 +70,11 @@ function hideShow(sel,initialShown,desc) {
 
 // file upload shenanigans
 function fancyUpload(targ) {
+    if (window.FormData===undefined || window.File===undefined || window.FileList===undefined ) {
+        return;
+    }
+
+
     // augment HTML with extra UI elements
     //
     var extras = '<div class="uploader-progress"><progress max="100"></progress><button class="uploader-progress-cancel">cancel</button><span class="uploader-progress-msg"></span></div>' +
