@@ -305,10 +305,13 @@ class BaseEntryHandler {
 
         // to run local smtp server for testing email sending:
         // $ sudo python -m smtpd -n -c DebuggingServer localhost:25
+/*
+	$mail->SMTPDebug = 4;
         $mail->isSMTP();
         $mail->Host       = "localhost"; // SMTP server
         $mail->Port       = 25;
-
+*/
+	$mail->isSendmail();
         $mail->Subject = $subject;
         $mail->setFrom($from);
         foreach($recipients as $to) {
