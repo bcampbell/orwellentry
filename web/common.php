@@ -53,6 +53,24 @@ function fld_label_right($f, $extra_css="") {
 <?php
 }
 
+class MyDateValidator {
+    function __construct($year)
+    {
+        $this->year = (string)$year;
+    }
+
+    function execute($value) {
+        $matches = array();
+        if(!preg_match('%([0-9]{1,2})[./-]([0-9]{1,2})[./-]([0-9]{4})%',$value, $matches)) {
+            throw new ValidationError(array("Please enter date as dd/mm/yyyy"));
+        }
+        if($matches[3] != $this->year) {
+            throw new ValidationError(array("Year must be {$this->year}"));
+        }
+    }
+}
+
+
 function newdatewidget()
 {
     return new TextInput(array('pattern'=>'[0-9]{1,2}[./-][0-9]{1,2}[./-][0-9]{4}'));

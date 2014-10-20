@@ -70,7 +70,7 @@ class SocialEntryForm extends Form {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["writing_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["writing_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication'));
-            $this["writing_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
+            $this["writing_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator(2014),'execute')) ));
             $this["writing_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["writing_{$n}_copy"] = new FileField(array('required'=>$req,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }
@@ -79,7 +79,7 @@ class SocialEntryForm extends Form {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["video_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["video_{$n}_provider"] = new CharField(array('required'=>$req,'label'=>'Channel/Content provider'));
-            $this["video_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
+            $this["video_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator(2014),'execute')) ));
             $this["video_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["video_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', 'help_text'=>"Please don't use an important password! It's just to prevent casual viewing by others."));
         }
@@ -88,7 +88,7 @@ class SocialEntryForm extends Form {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["audio_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["audio_{$n}_provider"] = new CharField(array('required'=>$req,'label'=>'Channel/Content provider'));
-            $this["audio_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first broadcast/release', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
+            $this["audio_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first broadcast/release', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator(2014),'execute')) ));
             $this["audio_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["audio_{$n}_password"] = new CharField(array('required'=>$req,'label'=>'Password (if required)', 'help_text'=>"Please don't use an important password! It's just to prevent casual viewing by others."));
         }
@@ -100,7 +100,7 @@ class SocialEntryForm extends Form {
         for( $n=1; $n<=3; ++$n) {
             $req = FALSE;   //($n<=4)?TRUE:FALSE;
             $this["photo_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
-            $this["photo_{$n}_date"] = new CharField(array('required'=>$req,'label'=>'Date taken', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget()));
+            $this["photo_{$n}_date"] = new CharField(array('required'=>$req,'label'=>'Date taken', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator(2014),'execute')) ));
             $this["photo_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication (if applicable)'));
             $this["photo_{$n}_url"] = new CharField(array('required'=>$req,'label'=>'URL'));
             $this["photo_{$n}_photo"] = new FileField(array('required'=>$req,'label'=>'Upload photo', 'help_text'=>"JPEG only please, max size 3 Meg"));
@@ -245,7 +245,9 @@ class SocialEntryForm extends Form {
                 $val = array_key_exists($fld,$this->cleaned_data) ? $this->cleaned_data[$fld] : "";
                 //error_log("CHK $fld: $val");
                 if($val == "" || is_null($val)) {
-                    $this->_errors[$fld] = array("This field is required");
+                    if(!array_key_exists($fld,$this->_errors)) {
+                        $this->_errors[$fld] = array("This field is required");
+                    }
                     unset($this->cleaned_data[$fld]);
                     $ok = FALSE;
                 }
