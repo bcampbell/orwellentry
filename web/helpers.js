@@ -99,7 +99,6 @@ function fancyUpload(targ) {
 
     // default state
     progressUI.style.display = 'none';
-    errorUI.style.display = 'none';
     attachedUI.style.display = 'none';
 
     function prettySize(n) {
