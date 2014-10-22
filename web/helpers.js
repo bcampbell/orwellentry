@@ -15,6 +15,10 @@ function selOrOther(selid,otherid,selotherval) {
 
 
 function hideShow(sel,initialShown,desc) {
+    if(document.addEventListener === undefined) {
+        return;
+    }
+
     var targs = document.querySelectorAll(sel);
     if (targs.length<1) {
             return;
