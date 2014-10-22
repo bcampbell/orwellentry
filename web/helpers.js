@@ -215,8 +215,7 @@ function fancyUpload(targ) {
             attachedUI.style.display = 'none';
         }, false);
 
-        var url = "";
-        xhr.open('post', url, true);
+        xhr.open('post',document.URL);
 
         var token = document.getElementById('async_upload_token').value;
         var fd = new FormData;
