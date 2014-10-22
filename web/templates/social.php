@@ -27,10 +27,8 @@
     entry.
     </p>
     <p>
-    Entry is FREE and there are no charges at any point. A majority
-    proportion of the work entered must have been produced or published
-    in 2014. Some of the work or reporting may have been carried out before
-    then.
+    Entry is FREE and there are no charges at any point. The work entered
+    must have been produced or published in 2014.
     </p>
 
     <p>For details, see the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules">full list of rules</a>.</p>
