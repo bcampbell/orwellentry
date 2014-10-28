@@ -15,7 +15,7 @@
     An entry for The Orwell Prize for Exposing Britain's Social Evils
     should consist of a story that has enhanced the public understanding
     of social problems and public policy in the UK. It must be communicated
-    across at least two platforms of the following platforms: journalistic
+    across at least two of the following platforms: journalistic
     writing, video content, audio content, social media, or photojournalism. 
     </p>
     <p>
