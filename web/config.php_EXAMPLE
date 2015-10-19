@@ -2,6 +2,9 @@
 $g_root="BLAHBLAHBLAH/orwellentry";
 $g_output_dir = 'BLAHBLAHLBAH/var/orwell';
 
+// which year submitted work must be in:
+$g_entry_year = 2015;
+
 // add our include dir to the path
 set_include_path(get_include_path() . PATH_SEPARATOR . "{$g_root}/inc");
 

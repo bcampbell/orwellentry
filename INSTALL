@@ -1,0 +1,14 @@
+
+
+$ mkdir site
+$ cd site
+$ git clone https://github.com/bcampbell/orwellentry.git
+$ git clone https://github.com/PHPMailer/PHPMailer.git
+$ git clone https://github.com/bcampbell/drongo-forms.git
+
+$ ln -s `pwd`/drongo-forms/lib orwellentry/inc/drongo-forms
+$ ln -s `pwd`/PHPMailer orwellentry/inc/PHPMailer
+
+
+
+

@@ -9,6 +9,7 @@ require_once "drongo-forms/forms.php";
 
 class JournalismEntryForm extends Form {
     function __construct($data=null,$files=null,$handler=null) {
+        global $g_entry_year;
         $this->handler = $handler;
         $opts = array(
             'label_suffix'=>'', // suppress a trailing ':' after labels
@@ -64,7 +65,7 @@ class JournalismEntryForm extends Form {
             $req = ($n<=4)?TRUE:FALSE;
             $this["item_{$n}_title"] = new CharField(array('required'=>$req,'label'=>'Title'));
             $this["item_{$n}_publication"] = new CharField(array('required'=>$req,'label'=>'Publication'));
-            $this["item_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator(2014),'execute')) ));
+            $this["item_{$n}_pubdate"] = new CharField(array('required'=>$req,'label'=>'Date of first publication', 'help_text'=>'dd/mm/yyyy', 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator($g_entry_year),'execute')) ));
             $this["item_{$n}_url"] = new CharField(array('required'=>FALSE,'label'=>'URL'));
             $this["item_{$n}_copy"] = new FileField(array('required'=>$req,'label'=>'Copy', 'help_text'=>"PDF only, please"));
         }

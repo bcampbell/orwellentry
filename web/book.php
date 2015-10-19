@@ -7,6 +7,8 @@ require_once "drongo-forms/forms.php";
 
 class BookEntryForm extends Form {
     function __construct($data=null,$files=null,$handler=null) {
+        global $g_entry_year;
+
         $this->handler = $handler;
         $opts = array(
             'label_suffix'=>'', // suppress a trailing ':' after labels
@@ -35,7 +37,7 @@ class BookEntryForm extends Form {
 
         $this['book_title'] = new CharField(
             array( 'required'=>TRUE, 'label'=>"Title"));
-        $this['publication_date'] = new CharField(array( 'required'=>TRUE, 'help_text'=>"dd/mm/yyyy", 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator(2014),'execute')) ));
+        $this['publication_date'] = new CharField(array( 'required'=>TRUE, 'help_text'=>"dd/mm/yyyy", 'widget'=>newdatewidget(), 'validators'=>array(array(new MyDateValidator($g_entry_year),'execute')) ));
         $this['author_first_name'] = new CharField(array( 'required'=>TRUE ));
         $this['author_last_name'] = new CharField(array( 'required'=>TRUE ));
         $this['book_cover'] = new FileField(array(
