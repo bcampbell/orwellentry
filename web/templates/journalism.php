@@ -9,20 +9,21 @@
 
 <?php startblock('main') ?>
 <div class="content">
-<h1>Journalism Prize 2015: Entry form</h1>
+<h1>Journalism Prize 2016: Entry form</h1>
 <p>
-The submission deadline is <em>15 January 2015</em>.
+The submission deadline is <em>15 January 2016</em>.
 </p>
 <p>
-Journalism Prize entries should consist of between four and six submissions,
-which may be articles (in print or online) or blog posts.</p>
+Journalism Prize entries should consist of at least four and no more than
+six submissions, which may be articles (in print or online) or blog posts.
+</p>
 <p>
 A byline photograph with no rights reserved must be
 submitted with every entry.
 </p>
 <p>
 Entry is FREE and there are no charges at any point. All work published for
-the first time between 1st January 2014 and 31st December 2014 is eligible.
+the first time between 1st January 2015 and 31st December 2015 is eligible.
 </p>
 <p>
 Entrants must have a clear relationship with the UK or Ireland (including,
@@ -41,8 +42,8 @@ but not limited to, residency, citizenship or first publication).
 <div class="fieldset-notes"><span>*</span> Required fields</div>
 <?php fld($f['journo_first_name']); ?>
 <?php fld($f['journo_last_name']); ?>
-<?php fld($f['journo_address']); ?>
 <?php fld($f['journo_email']); ?>
+<?php fld($f['journo_address']); ?>
 <?php fld($f['journo_twitter']); ?>
 <?php fld($f['journo_phone']); ?>
 <?php fld($f['journo_photo']); ?>
@@ -78,8 +79,20 @@ for($n=1; $n<=6; ++$n) {
 
 <fieldset>
 <legend>Disclaimer</legend>
-<p>I declare that this work, submitted for consideration for the Orwell Prize 2014, is wholly or substantially that of the names author or authors, and does not contain any plagiarised or unacknowledged material.</p>
+<p>I declare that this work, submitted for consideration for the Orwell Prize 2016, is wholly or substantially that of the named author or authors, and does not contain any plagiarised or unacknowledged material.</p>
+
 <?php fld_label_right($f['declaration']); ?>
+</fieldset>
+
+<fieldset>
+<p>
+I understand that, in the event of being long-listed for the Orwell Prize 2016, the author or authors
+may be called upon to participate in workshops run by The Orwell Youth Prize, and to produce a
+short piece of writing (no more than 500 words) for The Orwell Prize. I declare that the author or
+authors understand this and consent to this requirement.
+</p>
+
+<?php fld_label_right($f['workshop']); ?>
 </fieldset>
 
 <input type="submit" value="Submit Entry"/>
@@ -88,7 +101,8 @@ for($n=1; $n<=6; ++$n) {
 
 <div class="sidebar">
 <h3>Any questions?</h3>
-<p>If you have any queries, please <a href="mailto:theorwellprize@mediastandardstrust.org">email us</a> or call 0207 848 7930.</p>
+
+<p>If you have any queries, please <a href="mailto:stephanie.lelievre@theorwellprize.co.uk">email us</a> or call 0207 848 7930.</p>
 </div>
 
 
