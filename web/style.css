@@ -237,8 +237,8 @@ footer {
 
 
 /* */
-/* hacks */
-label[for="declaration"] { display: inline; padding-left: 0.4em; }
+/* label for checkbox should be on same line */
+input[type="checkbox"]+label { display: inline; padding-left: 0.4em; }
 
 .content h1 {
     margin-top: 0;

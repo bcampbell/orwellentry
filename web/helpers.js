@@ -85,9 +85,10 @@ function fancyUpload(targ) {
         '<div class="uploader-error"></div>' +
         '<div class="uploader-attached"><div class="uploader-attached-details"></div><button class="uploader-attached-remove">remove</button></div>';
 
-    targ.insertAdjacentHTML('afterend','<div class="uploader">' + extras + '</div>');
-    var progressUI = targ.nextElementSibling.querySelector(".uploader-progress");
-    var attachedUI = targ.nextElementSibling.querySelector(".uploader-attached");
+    targ.insertAdjacentHTML('beforebegin','<div class="uploader">' + extras + '</div>');
+    var uploader = targ.previousElementSibling;
+    var progressUI = uploader.querySelector(".uploader-progress");
+    var attachedUI = uploader.querySelector(".uploader-attached");
     var errorUI = targ.parentNode.querySelector(".errorlist li");
     if (errorUI===null) {
         targ.parentNode.insertAdjacentHTML('beforeend','<ul class="errorlist"><li></li></ul>');
