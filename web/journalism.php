@@ -75,7 +75,7 @@ class JournalismEntryForm extends Form {
         $this['publication_address'] = new CharField(array('required'=>TRUE, 'widget'=>'TextArea', 'label'=>'Address' ));
 
         $this['declaration'] = new BooleanField(array('required'=>TRUE, 'label'=>"I agree"));
-        $this['workshop'] = new BooleanField(array('required'=>FALSE, 'label'=>"I agree" ));
+        $this['workshop_consent'] = new BooleanField(array('required'=>FALSE, 'label'=>"I agree" ));
 
         if(array_key_exists('async_upload_token', $_POST)) {
             // check for already-uploaded files on the file fields:

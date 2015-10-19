@@ -107,6 +107,7 @@ class SocialEntryForm extends Form {
         }
 
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
+        $this['workshop_consent'] = new BooleanField(array('required'=>FALSE, 'label'=>"I agree" ));
 
 
         if(array_key_exists('async_upload_token', $_POST)) {

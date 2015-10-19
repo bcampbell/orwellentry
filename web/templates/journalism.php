@@ -1,7 +1,7 @@
 <?php require_once "common.php"; ?>
 <?php include 'base.php' ?>
 
-<?php startblock('title') ?>The Orwell Journalism Prize 2015: Entry form<?php endblock() ?>
+<?php startblock('title') ?>The Orwell Journalism Prize 2016: Entry form<?php endblock() ?>
 
 <?php startblock('head_extra') ?>
 <?php endblock() ?>
@@ -92,7 +92,7 @@ short piece of writing (no more than 500 words) for The Orwell Prize. I declare 
 authors understand this and consent to this requirement.
 </p>
 
-<?php fld_label_right($f['workshop']); ?>
+<?php fld_label_right($f['workshop_consent']); ?>
 </fieldset>
 
 <input type="submit" value="Submit Entry"/>

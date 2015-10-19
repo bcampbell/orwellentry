@@ -66,6 +66,8 @@ class BookEntryForm extends Form {
             'required'=>TRUE,
             'choices'=>array('author'=>"Author", 'publisher'=>"Publisher", 'agent'=>"Agent") ));
         $this['declaration'] = new BooleanField(array('label'=>"I agree"));
+        $this['workshop_consent'] = new BooleanField(array('required'=>FALSE, 'label'=>"I agree" ));
+        $this['event_consent'] = new BooleanField(array('required'=>FALSE, 'label'=>"I agree" ));
 
         if(array_key_exists('async_upload_token', $_POST)) {
             // check for already-uploaded files on the file fields:
