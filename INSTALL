@@ -11,4 +11,11 @@ $ ln -s `pwd`/PHPMailer orwellentry/inc/PHPMailer
 
 
 
+General config stuff to watch out for:
+
+nginx: make sure client_max_body_size is big enough to handle uploaded files
+(default is 2MB or so)
+
+php.ini: make sure upload_max_filesize is big enough
+
 
