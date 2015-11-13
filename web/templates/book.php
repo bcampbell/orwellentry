@@ -78,7 +78,7 @@ but not limited to, residency, citizenship or first publication).
 
 <fieldset>
 <legend>Disclaimer</legend>
-<p>I declare that this work, submitted for consideration for the Orwell Prize for Books 2014, is wholly or substantially my own, and does not contain any plagiarised or unacknowledged material.</p>
+<p>I declare that this work, submitted for consideration for the Orwell Prize for Books 2016, is wholly or substantially my own, and does not contain any plagiarised or unacknowledged material.</p>
 <?php fld_label_right($f['declaration']); ?>
 </fieldset>
 
