@@ -182,7 +182,7 @@ authors understand this and consent to this requirement.
 <div class="sidebar">
 <h3>Any questions?</h3>
 
-<p>If you have any queries, please contact <a href="mailto:stephanie.lelievre@theorwellprize.co.uk">stephanie.lelievre@theorwellprize.co.uk</a> or call 0207 848 7930.</p>
+<p>If you have any queries, please <a href="mailto:stephanie.lelievre@theorwellprize.co.uk">email us</a> or call 0207 848 7930.</p>
 </div>
 
 
