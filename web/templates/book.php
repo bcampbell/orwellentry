@@ -107,7 +107,7 @@ consent to this requirement.
 
 <div class="sidebar">
 <h3>Any questions?</h3>
-<p>If you have any queries, please <a href="mailto:theorwellprize@mediastandardstrust.org">email us</a> or call 0207 848 7930.</p>
+<p>If you have any queries, please <a href="stephanie.lelievre@theorwellprize.co.uk">email us</a> or call 0207 848 7930.</p>
 </div>
 
 <script src="/helpers.js"></script>
