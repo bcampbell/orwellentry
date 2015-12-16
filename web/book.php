@@ -47,7 +47,7 @@ class BookEntryForm extends Form {
         $this['link_with_uk_or_ireland'] = new ChoiceField(array(
             'label'=>'Relationship of entry to UK or Ireland',
             'choices'=>$relationship_choices,
-            'help_text'=>'See point 9 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
+            'help_text'=>'See point 10 of the <a href="http://theorwellprize.co.uk/the-orwell-prize/how-to-enter/rules/">rules</a> for details.'));
         $this['link_other'] = new CharField(array('required'=>FALSE,'label'=>""));
         $this['author_email'] = new EmailField(array('required'=>TRUE, 'label'=>"Email", 'widget'=>newemailwidget() ));
         $this['author_twitter'] = new CharField(array('required'=>FALSE, 'label'=>"Twitter"));
